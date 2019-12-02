@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Welcome Yoo Chu!</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href='{% static "app/mainpage/vendor/bootstrap/css/bootstrap.min.css" %}' rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href='{% static "app/mainpage/css/the-big-picture.css" %}' rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+    <div class="container">
+      <a class="navbar-brand" href="#">Start YooChu</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signin' %}">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <h1 class="mt-5" style="color:white;">요추 : 요금 추천 시스템</h1>
+          <p style="color:white;">본 시스템은 현재 다양한 휴대폰 요금제 시스템으로 인하여 자신이 어떤 요금제를 선택해야하는지 정확히 잘 모르는 사람들을 위한 시스템 입니다. 이 시스템에서 전화번호를 입력하시면 자신의 개인정보와 그에 맞는 데이터 요금제를 추천해 드립니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src='{% static "app/mainpage/vendor/jquery/jquery.min.js" %}'></script>
+  <script src='{% static "app/mainpage/vendor/bootstrap/js/bootstrap.bundle.min.js" %}'></script>
+</body>
+
+</html>

@@ -2,18 +2,15 @@ from app.models import MyUser
 from django.conf import settings
 import logging
 
+
 class MyAuthBackend(object):
-    def authenticate(self,request, username = None, password=None):
+    def authenticate(self,request, username=None, password=None):
         try:
             user = MyUser.objects.get(phonenum=username)
-            print("user {}".format(type(user)))
-            """
-            if user.check_password(password):
+            if user.password == password:
                 return user
             else:
                 return None
-            """
-            return user
         except MyUser.DoesNotExist:
             logging.getLogger("error_logger").error("user with login %s does not exists ")
             return None

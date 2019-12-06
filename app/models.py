@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django import forms
-
+import json
 
 class MyUserManager(BaseUserManager):
     def create_user(self, phonenum, name ,password=None):
@@ -27,17 +27,11 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser, PermissionsMixin):
     phonenum = models.CharField(primary_key=True, max_length=20)    #PK
     name = models.CharField(max_length=10)      #이름
-    Agency_name = models.ForeignKey(
-        'Agency',
-        models.SET_NULL,
-        blank=True,
-        null=True
-    )
     Plan_name = models.ForeignKey(
         'Plan',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
     )
     data_useage = models.TextField()            #데이터 사용량
     message_useage = models.PositiveIntegerField(10, null=False, default=0)    #메시지 사용량
@@ -76,6 +70,58 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         # Simplest possible answer: All superusers are staff
         return self.is_superuser
 
+
+def JSON_to_MyUser(json_str):
+    # dict = json.loads(json_str)
+    dict = json_str
+    myuser = MyUser()
+
+    myuser.phonenum = dict['phonenum']
+    myuser.name = dict['name']
+    myuser.data_useage = dict['data_useage']
+    myuser.message_useage = dict['message_useage']
+    myuser.call_useage = dict['call_useage']
+    myuser.User_content = dict['User_contents']
+    myuser.Plan_name = dict['Plan_name']
+    myuser.Family_number = dict['Family_number']
+    return myuser
+
+class NewUser:
+    def __init__(self,phonenum, name, age, main_content, data_usage, Agency_name, Check_INF):
+        self.phonenum = phonenum
+        self.name = name
+        self.age = age
+        self.main_content = main_content
+        self.data_usage = data_usage
+        self.Agency_name = Agency_name
+        self.Check_INF = Check_INF
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
+def JSON_To_NewUser(json_str):
+    dict = json.loads(json_str)
+    phonenum = dict['phonenum']
+    name = dict['name']
+    age = dict['age']
+    main_content = dict['main_content']
+    data_usage = dict['data_usage']
+    Agency_name = dict['Agency_name']
+    Check_INF = dict['Check_INF']
+    return NewUser(phonenum, name, age, main_content, data_usage,Agency_name,Check_INF)
+
+
+"""
+    def serialize(self):
+        return { 'phonenum' : self.phonenum,
+                 'name' : self.name,
+                 'age' : self.age,
+                 'main_content' : self.main_content,
+                 'data_usage' : self.data_usage,
+                 'Agency_name' : self.Agency_name,
+                 'Check_INF' : self.Check_INF}
+"""
 #가족 엔티티
 class Family(models.Model):
     Family_id = models.IntegerField(10, primary_key=True, null=False)

@@ -12,9 +12,17 @@
 
 <div class="container">
   <h2>개인 정보를 입력해 주세요</h2>
-  <form class="form-group" action="">
+  <form method="post" action=""> {% csrf_token %}
+      <div class="form-group">
+      <label for="name">이름 :</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter your name" name="name">
+    </div>
+     <div class="form-group">
+      <label for="age">나이 :</label>
+        <input type="number" min=0 max=120 class="form-control" id="age" placeholder="Enter your age" name="age">
+    </div>
       <label for="main_content">주 사용처 (select one) :</label>
-      <select class="form-control" id="main_content">
+      <select class="form-control" id="main_content" name="main_content">
         <option>비디오</option>
         <option>게임</option>
         <option>SNS</option>
@@ -24,11 +32,11 @@
       <br>
     <div class="form-group">
       <label for="data_usage">데이터 사용량(MB) :</label>
-        <input type="number" min = 0 max=999999 class="form-control" id="data_usage" placeholder="Enter Usage" name="email">
+        <input type="number" min = 0 max=999999 class="form-control" id="data_usage" placeholder="Enter Usage" name="data_usage">
     </div>
    <div class="form-group">
       <label for="Agency_name">가족 통신사 (select one):</label>
-           <select class="form-control" id="Agency_name">
+           <select class="form-control" id="Agency_name" name="Agency_name">
         <option>SKT</option>
         <option>KT</option>
         <option>U+</option>
@@ -37,17 +45,15 @@
     </div>
         <label>무제한 여부</label>
         <br>
-        <form>
             <label class="radio-inline">
-                <input type="radio" name="Check_INF" checked>예
+                <input type="radio" name="Check_INF" value="yes" checked> 예
             </label>
             <label class="radio-inline">
-                <input type="radio" name="Check_INF">아니오
+                <input type="radio" name="Check_INF" value="no"> 아니오
             </label>
-        </form>
-    <div class="form-group">
-        <button type="submit" class="btn btn-default">Submit</button>
-    </div>
+      <br>
+      <br>
+      <button type="submit" class="btn btn-default">Submit</button>
   </form>
 </div>
 

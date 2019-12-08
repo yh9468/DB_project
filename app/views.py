@@ -102,10 +102,9 @@ def dashboard(request):
         return render(request, 'app/dashboard.html', context)
 
 # 유저, 통신사, 가족 데이터 생성
-def data_generate():
+def data_generate(request):
     rand_phonenum = 29823081
     Family_id = 0
-    db_size = int(input())
     Agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
     User_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
 
@@ -121,8 +120,11 @@ def data_generate():
     Agency5.save()
     Agency6 = Agency(Agency_name=Agencies[5], Agency_phone=240)
     Agency6.save()
-
-    for i in range(0, db_size):
+    infp = INF_details(Plan_name='test', Agency_name=Agency6,
+                       Call_Limit=3, Message_Limit=3,
+                       Month_limit=300, Day_limit=2)
+    infp.save()
+    for i in range(0, 10000):
         rand_phonenum += random.randint(1, 2)
         name_selector1 = random.randint(0, 29)
         name_selector2 = random.randint(0, 45)
@@ -130,7 +132,7 @@ def data_generate():
         content_selector = random.randint(0,5)
         myuser = table.MyUser(phonenum=str(rand_phonenum),
                               name=last_name[name_selector1]+first_name[name_selector2]+first_name[name_selector3],
-                              Plan_name='FK위치',
+                              Plan_name=infp,
                               data_useage='랜덤 생성 예정',
                               message_useage='랜덤 생성 예정',
                               call_useage='랜덤 생성 예정',
@@ -146,9 +148,10 @@ def data_generate():
                                   )
             family.save()
 
-#def
+    return render(request,'app/index.html')
 
-
+def plan_data():
+    random.randint()
 
 
 def recommend():    # 요금제 추천해주는 시스템.

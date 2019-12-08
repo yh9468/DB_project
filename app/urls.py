@@ -21,6 +21,10 @@ urlpatterns = [
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', user_list, name='user_list'),
     path('api/<str:pk>/',user_detail, name='user_detail'),
+    path('makedata/',views.make_data, name="make_data"),
+
+    path('selectleft/', views.testleft, name='test_left'),
+    path('selectright/',views.testright,name='test_right'),
 
     path('', views.index, name='index'),
     path('dashboard/',views.dashboard, name='dashboard'),

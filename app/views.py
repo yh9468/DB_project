@@ -64,6 +64,9 @@ class NordetailView(viewsets.ModelViewSet):
     queryset = NOR_details.objects.all()
     serializer_class = NordetailSerializer
 
+def make_data(request):
+    return render(request,'app/make_data.html')
+
 def index(request):
     return render(request,'app/index.html')
 
@@ -157,6 +160,13 @@ def plan_data():
 def recommend():    # 요금제 추천해주는 시스템.
     return 0
 
+def testleft(request):
+    print("왼쪽 버튼을 눌렀습니다")
+    return render(request,'app/make_data.html')
+
+def testright(request):
+    print("오른쪽 버튼을 눌렀습니다")
+    return render(request,'app/make_data.html')
 
 def signin(request):
     if request.COOKIES.get('username') is not None:

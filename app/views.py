@@ -3,9 +3,12 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 import django.contrib.auth as auth
 import requests
+import json
+from collections import OrderedDict
 from django.contrib import messages
 from django.core import serializers
 from rest_framework import viewsets
+from openpyxl import load_workbook
 from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser
 from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer
 from rest_framework.views import APIView
@@ -125,33 +128,30 @@ def agency_generator(request):
     return render(request,'app/make_data.html')
 
 def plan_generator(request):
-
     return render(request,'app/make_data.html')
 
-
-# 유저, 통신사, 가족 데이터 생성
-def testleft(request):
+def make_user():
     rand_phonenum = 29823081
     family_id = 0
-    agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
+    agencies = ['KT', 'SKT', 'LGU+', 'C_SKT', 'C_KT', 'C_LGU+']
     user_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
     plan_key = []
-    data_useage_6 = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0}
+    data_useage_6 = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
 
-    for i in range(1001, 1019+1): plan_key.append(i)
-    for i in range(2001, 2048+1): plan_key.append(i)
-    for i in range(3001, 3052+1): plan_key.append(i)
-    for i in range(4001, 4006+1): plan_key.append(i)
-    for i in range(5001, 5019+1): plan_key.append(i)
-    for i in range(6001, 6025+1): plan_key.append(i)
-    for i in range(1101, 1115+1): plan_key.append(i)
-    for i in range(2101, 2113+1): plan_key.append(i)
-    for i in range(3101, 3120+1): plan_key.append(i)
+    for i in range(1001, 1019 + 1): plan_key.append(i)
+    for i in range(2001, 2048 + 1): plan_key.append(i)
+    for i in range(3001, 3052 + 1): plan_key.append(i)
+    for i in range(4001, 4006 + 1): plan_key.append(i)
+    for i in range(5001, 5019 + 1): plan_key.append(i)
+    for i in range(6001, 6025 + 1): plan_key.append(i)
+    for i in range(1101, 1115 + 1): plan_key.append(i)
+    for i in range(2101, 2113 + 1): plan_key.append(i)
+    for i in range(3101, 3120 + 1): plan_key.append(i)
     plan_key.append(4101)
-    for i in range(5101, 5102+1): plan_key.append(i)
-    for i in range(6101, 6102+1): plan_key.append(i)
+    for i in range(5101, 5102 + 1): plan_key.append(i)
+    for i in range(6101, 6102 + 1): plan_key.append(i)
 
-    infp = INF_details(Plan_index=3, Plan_name='test', Plan_cost=300,
+    infp = INF_details(Plan_ID=3, Plan_name='test', Plan_cost=300,
                        Agency_name=Agency.objects.get(Agency_name=agencies[0]),
                        Call_Limit=3, Message_Limit=3,
                        Month_limit=300, Day_limit=2)
@@ -161,18 +161,19 @@ def testleft(request):
         name_selector1 = random.randint(0, 29)
         name_selector2 = random.randint(0, 45)
         name_selector3 = random.randint(0, 45)
-        content_selector = random.randint(0,5)
+        content_selector = random.randint(0, 5)
         plan_selector = random.randint(0, 221)
         message_dif = random.randint(0, 15)
         call_dif = random.randint(0, 10)
 
-        if (plan_key[plan_selector]%1000)//100 == 0:
+        if (plan_key[plan_selector] % 1000) // 100 == 0:
             plan = NOR_details.objects.get(Plan_ID=plan_key[plan_selector])
-            for i in range(1, 6+1):
-                data_dif = random.randint(0, 5)/10
+            for i in range(1, 6 + 1):
+                data_dif = random.randint(0, 5) / 10
                 data_useage_6[str(i)] = abs(plan.Total_limit - data_dif)
             myuser = table.MyUser(phonenum=str(rand_phonenum),
-                                  name=last_name[name_selector1]+first_name[name_selector2]+first_name[name_selector3],
+                                  name=last_name[name_selector1] + first_name[name_selector2] + first_name[
+                                      name_selector3],
                                   Plan_name=plan,
                                   data_useage=json.dumps(data_useage_6),
                                   message_useage=abs(plan.Message_Limit - message_dif),
@@ -181,7 +182,7 @@ def testleft(request):
                                   )
         else:
             plan = INF_details.objects.get(Plan_ID=plan_key[plan_selector])
-            for i in range(1, 6+1):
+            for i in range(1, 6 + 1):
                 data_dif = random.randint(-3, 5)
                 data_useage_6[str(i)] = plan.Month_limit + data_dif
             myuser = table.MyUser(phonenum=str(rand_phonenum),
@@ -195,7 +196,7 @@ def testleft(request):
                                   )
 
         myuser.save()
-        if (i%2) == 0:
+        if (i % 2) == 0:
             family_id += 1
             Agency_selector = random.randint(0, 8) % 6
             family = table.Family(Family_User=myuser,
@@ -204,7 +205,11 @@ def testleft(request):
                                   )
             family.save()
 
-    return render(request,'app/make_data.html')
+
+# 유저, 통신사, 가족 데이터 생성
+def testleft(request):
+    make_plan_table()
+
 
 def plan_data():
     random.randint()
@@ -214,8 +219,55 @@ def recommend():    # 요금제 추천해주는 시스템.
     return 0
 
 def testright(request):
-    print("오른쪽 버튼을 눌렀습니다")
+    make_user()
     return render(request,'app/make_data.html')
+
+def make_inf_json():
+    return None
+
+def make_plan_json(Plan_list):
+    plan_data = OrderedDict()
+    plan_data["Plan_ID"] = Plan_list[0]
+    plan_data["Plan_name"] = Plan_list[2]
+    plan_data["Plan_cost"] = Plan_list[3]
+    plan_data["Agency_name"] = Plan_list[1]
+    plan_data["Call_Limit"] = Plan_list[8]
+    plan_data["Message_Limit"] = Plan_list[9]
+    if plan_data["Call_Limit"] == '기본제공':
+        plan_data["Call_Limit"] = 999999
+    elif plan_data["Call_Limit"] == "X":
+        plan_data["Call_Limit"] = 0
+    if plan_data["Message_Limit"] == '기본제공':
+        plan_data["Message_Limit"] = 999999
+    elif plan_data["Message_Limit"] == "X":
+        plan_data["Message_Limit"] = 0
+
+    plan_data = json.dumps(plan_data, ensure_ascii=False, indent="\t").encode('utf-8')
+    return plan_data
+def make_nor_json():
+    return None
+
+def make_plan_table():
+    load_wb = load_workbook("app/static/app/data.xlsx", data_only=True)
+    load_ws = load_wb['Sheet1']
+    all_values = []
+    for row in load_ws.rows:
+        row_value = []
+        for cell in row:
+            row_value.append(cell.value)
+        all_values.append(row_value)
+    all_values = all_values[2:]
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    for value in all_values:
+        is_inf = value[4]
+        plan_json = make_plan_json(value)
+
+        if(is_inf == "O"):      #무한
+            requests.post("http://127.0.0.1:8000/planapi/", headers=headers ,data=plan_json)
+        else:                   #무제한 아닌거
+            requests.post("http://127.0.0.1:8000/planapi/", headers=headers, data=plan_json)
+
+
 
 def signin(request):
     if request.COOKIES.get('username') is not None:

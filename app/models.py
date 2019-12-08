@@ -34,8 +34,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         blank=False
     )
     data_useage = models.TextField()    #데이터 사용량
-    message_useage = models.PositiveIntegerField(10, null=False, default=0)    #메시지 사용량
-    call_useage = models.PositiveIntegerField(10, null=False, default=0)       #전화 사용량
+    message_useage = models.PositiveIntegerField("message_useage", null=False, default=0)    #메시지 사용량
+    call_useage = models.PositiveIntegerField("call_useage", null=False, default=0)       #전화 사용량
 
     User_contents = models.CharField(max_length=10)
     # Family_number = models.ForeignKey(
@@ -45,8 +45,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     #     null=True
     # ) 가족이 FK로 유저의 phone num을 참조하는게 맞을것같습니다.
 
+
     USERNAME_FIELD = 'phonenum'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name', 'Plan_name', 'message_useage', 'call_useage']
     objects = MyUserManager()
 
     class Meta:
@@ -131,7 +132,7 @@ class Family(models.Model):
         null=False,
         blank=False
     )
-    Family_id = models.IntegerField(10, primary_key=True, null=False)
+    Family_id = models.IntegerField("Family_id", primary_key=True, null=False)
     agency_name = models.ForeignKey(
         'Agency',
         models.SET_NULL,
@@ -149,7 +150,7 @@ class Family(models.Model):
 
 #통신사 엔티티
 class Agency(models.Model):
-    Agency_name = models.CharField(max_length=30, primary_key=True, null=False)
+    Agency_name = models.CharField(max_length=10, primary_key=True, null=False)
     Agency_phone = models.CharField(max_length=20, null=False)
 
     class Meta:
@@ -159,31 +160,31 @@ class Agency(models.Model):
         return self.Agency_name
 
 class Plan(models.Model):
-    Plan_index = models.PositiveIntegerField(primary_key=True, null=False)
-    Plan_cost = models.PositiveIntegerField(10, null=False)
+    Plan_cost = models.PositiveIntegerField("Plan_cost", null=False)
     Plan_name = models.CharField(max_length=50, null=False)
+    Plan_ID = models.PositiveIntegerField("Plan_ID", null=False, primary_key=True)
     Agency_name = models.ForeignKey(
         'Agency',
         on_delete=models.CASCADE,           #통신사 사라지면 요금제도 당연히 사라져야 하므로
         null=False,
         blank=False
     )
-    Call_Limit = models.PositiveIntegerField(10, null=False)       #unsigned
-    Message_Limit = models.PositiveIntegerField(10, null=False)
+    Call_Limit = models.PositiveIntegerField("Call_Limit", null=False)       #unsigned
+    Message_Limit = models.PositiveIntegerField("Message_Limit", null=False)
     class Meta:
         db_table = 'Plan_table'
         verbose_name = '요금제'
         verbose_name_plural = '요금제들'
 
 class INF_details(Plan):
-    Month_limit = models.PositiveIntegerField(10, null=False)
-    Day_limit = models.PositiveIntegerField(10, null=False)
+    Month_limit = models.FloatField("Month_limit", null=False)
+    Day_limit = models.FloatField("Day_limit", null=False)
 
     class Meta:
         db_table = 'INF_table'
 
 class NOR_details(Plan):
-    Total_limit = models.PositiveIntegerField(10, null=False)
+    Total_limit = models.FloatField("Total_limit", null=False)
 
     class Meta:
         db_table = 'NOR_table'

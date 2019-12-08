@@ -3,13 +3,24 @@
   <component name="ChangeListManager">
     <list default="true" id="a475aac1-5449-42ec-a379-cf1a11ab44c8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 =======
       <change beforePath="$PROJECT_DIR$/app/templates/app/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/app/dashboard.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/app/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/app/index.html" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/migrations/0002_remove_myuser_agency_name.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/serializers.py" afterDir="false" />
+>>>>>>> Stashed changes
       <change beforePath="$PROJECT_DIR$/app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/urls.py" afterDir="false" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+<<<<<<< Updated upstream
+=======
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,7 +53,7 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file pinned="false" current-in-tab="true">
+            <file pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/app/templates/app/login.html">
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="183">
@@ -59,6 +70,18 @@
                       <element signature="e#1060#1127#0#HTML" />
                       <element signature="e#1154#1186#0#HTML" />
                       <element signature="e#1217#1303#0#HTML" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/app/models.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="313">
+                    <caret line="162" column="19" lean-forward="true" selection-start-line="162" selection-start-column="19" selection-end-line="162" selection-end-column="19" />
+                    <folding>
+                      <element signature="e#0#28#0" expanded="true" />
                     </folding>
                   </state>
                 </provider>
@@ -183,6 +206,15 @@
 =======
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DB_project/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="483">
+              <caret line="96" column="5" lean-forward="true" selection-start-line="96" selection-start-column="5" selection-end-line="96" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/templates/app/dashboard.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="284">
@@ -192,9 +224,30 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="518">
+              <caret line="46" column="22" lean-forward="true" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/rest_framework/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="183">
+              <caret line="1117" selection-start-line="1117" selection-end-line="1117" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/templates/app/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-85">
+            <state relative-caret-position="-51">
               <caret line="41" column="55" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="55" />
             </state>
           </provider>
@@ -203,8 +256,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="24" selection-start-line="24" selection-end-line="24" />
+            <state relative-caret-position="214">
+              <caret line="97" selection-start-line="97" selection-end-line="97" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -212,36 +265,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="95" column="46" selection-start-line="95" selection-start-column="46" selection-end-line="95" selection-end-column="46" />
+            <state relative-caret-position="219">
+              <caret line="118" column="38" selection-start-line="118" selection-start-column="38" selection-end-line="118" selection-end-column="38" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/templates/app/make_data.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="135" column="6" selection-start-line="135" selection-start-column="6" selection-end-line="135" selection-end-column="6" />
-              <folding>
-                <element signature="n#style#0;n#html#0;n#!!top" />
-                <element signature="e#117#165#0#HTML" />
-                <element signature="e#169#198#0#HTML" />
-                <element signature="e#237#339#0#HTML" />
-                <element signature="e#389#622#0#HTML" />
-                <element signature="e#648#665#0#HTML" />
-                <element signature="e#734#782#0#HTML" />
-                <element signature="e#793#841#0#HTML" />
-                <element signature="e#851#899#0#HTML" />
-                <element signature="e#950#1017#0#HTML" />
-                <element signature="e#1044#1076#0#HTML" />
-                <element signature="e#1107#1193#0#HTML" />
               </folding>
             </state>
           </provider>
@@ -254,32 +284,6 @@
               <caret line="20" column="29" selection-start-line="20" selection-start-column="29" selection-end-line="20" selection-end-column="29" />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/apps.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
-              <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/admin.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="57">
-              <caret line="5" column="26" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#32#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/__init__.py">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -296,9 +300,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>database</find>
-      <find>default</find>
-      <find>_db</find>
       <find>db</find>
       <find>authen</find>
       <find>authentication_b</find>
@@ -330,7 +331,13 @@
 =======
       <find>yoo</find>
       <find>contact</find>
+<<<<<<< Updated upstream
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
+=======
+      <find>fields</find>
+      <find>foreignkey</find>
+      <find>call_limit</find>
+>>>>>>> Stashed changes
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -360,6 +367,7 @@
         <option value="$PROJECT_DIR$/app/templates/app/login.html" />
         <option value="$PROJECT_DIR$/app/static/app/mainpage/css/the-big-picture.css" />
         <option value="$PROJECT_DIR$/app/templates/app/newuser_form.html" />
+<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/app/serializers.py" />
 <<<<<<< HEAD
         <option value="$PROJECT_DIR$/app/samplegen.py" />
@@ -377,17 +385,21 @@
     <ConfirmationsSetting value="2" id="Add" />
 =======
         <option value="$PROJECT_DIR$/app/models.py" />
+=======
+>>>>>>> Stashed changes
         <option value="$PROJECT_DIR$/app/templates/app/dashboard.html" />
         <option value="$PROJECT_DIR$/app/templates/app/index.html" />
-        <option value="$PROJECT_DIR$/app/views.py" />
-        <option value="$PROJECT_DIR$/app/urls.py" />
         <option value="$PROJECT_DIR$/app/templates/app/make_data.html" />
+        <option value="$PROJECT_DIR$/app/serializers.py" />
+        <option value="$PROJECT_DIR$/app/urls.py" />
+        <option value="$PROJECT_DIR$/app/models.py" />
+        <option value="$PROJECT_DIR$/app/views.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-7" />
-    <option name="width" value="772" />
+    <option name="width" value="775" />
     <option name="height" value="1057" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
   </component>
@@ -412,12 +424,16 @@
               <item name="DB_project" type="b2602c69:ProjectViewProjectNode" />
               <item name="DB_project" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DB_project" type="b2602c69:ProjectViewProjectNode" />
               <item name="DB_project" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+<<<<<<< Updated upstream
+=======
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+>>>>>>> Stashed changes
               <item name="app" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -552,12 +568,17 @@
       <workItem from="1575771080173" duration="3120000" />
 =======
       <workItem from="1575598965047" duration="13477000" />
+<<<<<<< Updated upstream
       <workItem from="1575770774917" duration="3320000" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
+=======
+      <workItem from="1575770774917" duration="15914000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <option name="totallyTimeSpent" value="127554000" />
   </component>
@@ -568,18 +589,26 @@
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13087249" />
 =======
     <option name="totallyTimeSpent" value="119358000" />
+=======
+    <option name="totallyTimeSpent" value="131952000" />
+>>>>>>> Stashed changes
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="772" height="1057" extended-state="0" />
+    <frame x="-7" y="0" width="775" height="1057" extended-state="0" />
     <editor active="true" />
     <layout>
+<<<<<<< Updated upstream
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2738764" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
+=======
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27272728" />
+>>>>>>> Stashed changes
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info anchor="bottom" id="Message" order="0" />
+<<<<<<< Updated upstream
       <window_info anchor="bottom" id="Find" order="1" weight="0.3277311" />
 <<<<<<< HEAD
       <window_info anchor="bottom" id="Run" order="2" weight="0.28794327" />
@@ -587,6 +616,11 @@
       <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3488624" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
+=======
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32719395" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3488624" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.3997833" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -601,6 +635,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" weight="0.3299748" />
+<<<<<<< Updated upstream
 <<<<<<< HEAD
       <window_info anchor="right" id="Database" order="4" visible="true" weight="0.038926173" />
       <window_info anchor="right" id="Palette" order="5" />
@@ -609,6 +644,9 @@
 =======
       <window_info anchor="right" id="Database" order="4" visible="true" weight="0.049157303" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
+=======
+      <window_info anchor="right" id="Database" order="4" visible="true" weight="0.04895105" />
+>>>>>>> Stashed changes
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21662469" />
@@ -645,12 +683,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/views.py</url>
-          <line>115</line>
+          <line>165</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/views.py</url>
-          <line>68</line>
+          <line>71</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
@@ -658,14 +696,29 @@
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
     <watches-manager>
       <configuration name="Python.DjangoServer">
-        <watch expression="user.check_password(None)" language="Python" />
-        <watch expression="user.password" language="Python" />
-        <watch expression="user.phonenum" language="Python" />
+        <watch expression="all_values" language="Python" />
+        <watch expression="value" language="Python" />
+        <watch expression="plan_json" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
+      <expression>
+        <expression-string>plan_json</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>value</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>all_values</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>user.phonenum</expression-string>
         <language-id>Python</language-id>
@@ -694,6 +747,7 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/threading.py" />
 =======
@@ -704,6 +758,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/core/management/base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="118">
@@ -748,8 +804,25 @@
     <entry file="file://$PROJECT_DIR$/app/migrations/0002_remove_myuser_agency_name.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/contrib/auth/base_user.py" />
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/contrib/auth/hashers.py" />
+=======
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/contrib/auth/base_user.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="110" selection-start-line="110" selection-end-line="110" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/contrib/auth/hashers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="89" column="30" selection-start-line="89" selection-start-column="30" selection-end-line="89" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/DB_project/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -763,6 +836,7 @@
     <entry file="file://$PROJECT_DIR$/DB_project/wsgi.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/requests/models.py" />
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/requests/api.py" />
     <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/template/defaulttags.py" />
@@ -771,6 +845,33 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
           <caret line="29" column="51" selection-start-line="28" selection-start-column="51" selection-end-line="29" selection-end-column="51" />
+=======
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/requests/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="547" selection-start-line="547" selection-end-line="547" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/requests/api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="74" selection-start-line="74" selection-end-line="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/template/defaulttags.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="630" column="4" selection-start-line="630" selection-start-column="4" selection-end-line="630" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/django/contrib/auth/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1368">
+          <caret line="83" selection-start-line="83" selection-end-line="83" />
+>>>>>>> Stashed changes
         </state>
       </provider>
     </entry>
@@ -923,6 +1024,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/django/conf/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="931">
@@ -950,6 +1052,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/app/tests.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -984,6 +1088,7 @@
       <provider selected="true" editor-type-id="text-editor" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/templates/app/dashboard.html">
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< HEAD
@@ -1036,9 +1141,26 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/templates/app/index.html">
+=======
+    <entry file="file://$PROJECT_DIR$/app/templates/app/make_data.html">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-85">
-          <caret line="41" column="55" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="55" />
+        <state relative-caret-position="513">
+          <caret line="161" selection-start-line="161" selection-end-line="161" />
+          <folding>
+            <element signature="n#style#0;n#html#0;n#!!top" />
+            <element signature="e#117#165#0#HTML" />
+            <element signature="e#169#198#0#HTML" />
+            <element signature="e#237#339#0#HTML" />
+            <element signature="e#389#622#0#HTML" />
+            <element signature="e#648#665#0#HTML" />
+            <element signature="e#734#782#0#HTML" />
+            <element signature="e#793#841#0#HTML" />
+            <element signature="e#851#899#0#HTML" />
+            <element signature="e#950#1017#0#HTML" />
+            <element signature="e#1044#1076#0#HTML" />
+            <element signature="e#1107#1193#0#HTML" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1062,20 +1184,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views.py">
+    <entry file="file://$PROJECT_DIR$/app/templates/app/newuser_form.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="95" column="46" selection-start-line="95" selection-start-column="46" selection-end-line="95" selection-end-column="46" />
+        <state relative-caret-position="380">
+          <caret line="20" column="29" selection-start-line="20" selection-start-column="29" selection-end-line="20" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DB_project/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="96" column="5" lean-forward="true" selection-start-line="96" selection-start-column="5" selection-end-line="96" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/app/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-51">
+          <caret line="41" column="55" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/migrations/0001_initial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="29" column="51" selection-start-line="28" selection-start-column="51" selection-end-line="29" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Anaconda3/envs/DB/Lib/site-packages/rest_framework/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="1117" selection-start-line="1117" selection-end-line="1117" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/app/dashboard.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="37" selection-start-line="37" selection-end-line="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="518">
+          <caret line="46" column="22" lean-forward="true" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="22" />
           <folding>
-            <element signature="e#0#45#0" expanded="true" />
+            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        <state relative-caret-position="214">
+          <caret line="97" selection-start-line="97" selection-end-line="97" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
@@ -1094,6 +1258,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/templates/app/login.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="249">
@@ -1107,22 +1272,24 @@
           <caret line="29" column="14" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="14" />
 =======
     <entry file="file://$PROJECT_DIR$/app/templates/app/make_data.html">
+=======
+    <entry file="file://$PROJECT_DIR$/app/views.py">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="135" column="6" selection-start-line="135" selection-start-column="6" selection-end-line="135" selection-end-column="6" />
+        <state relative-caret-position="219">
+          <caret line="118" column="38" selection-start-line="118" selection-start-column="38" selection-end-line="118" selection-end-column="38" />
           <folding>
-            <element signature="n#style#0;n#html#0;n#!!top" />
-            <element signature="e#117#165#0#HTML" />
-            <element signature="e#169#198#0#HTML" />
-            <element signature="e#237#339#0#HTML" />
-            <element signature="e#389#622#0#HTML" />
-            <element signature="e#648#665#0#HTML" />
-            <element signature="e#734#782#0#HTML" />
-            <element signature="e#793#841#0#HTML" />
-            <element signature="e#851#899#0#HTML" />
-            <element signature="e#950#1017#0#HTML" />
-            <element signature="e#1044#1076#0#HTML" />
-            <element signature="e#1107#1193#0#HTML" />
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="162" column="19" lean-forward="true" selection-start-line="162" selection-start-column="19" selection-end-line="162" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
 >>>>>>> 6dcd8042d24407a03e21ffacfa94b9f879265ac1
         </state>

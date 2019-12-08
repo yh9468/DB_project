@@ -159,7 +159,9 @@ class Agency(models.Model):
         return self.Agency_name
 
 class Plan(models.Model):
-    Plan_name = models.CharField(max_length=20, null=False,primary_key=True)
+    Plan_index = models.PositiveIntegerField(primary_key=True, null=False)
+    Plan_cost = models.PositiveIntegerField()
+    Plan_name = models.CharField(max_length=20, null=False)
     Agency_name = models.ForeignKey(
         'Agency',
         on_delete=models.CASCADE,           #통신사 사라지면 요금제도 당연히 사라져야 하므로
@@ -182,7 +184,6 @@ class INF_details(Plan):
 
 class NOR_details(Plan):
     Total_limit = models.PositiveIntegerField(10, null=False)
-
 
     class Meta:
         db_table = 'NOR_table'

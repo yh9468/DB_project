@@ -13,6 +13,7 @@ from rest_framework.renderers import JSONRenderer
 import app.models
 import app.models as table
 import random
+import json
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DB_project.settings')
 
@@ -104,28 +105,54 @@ def dashboard(request):
         context = {'user': user}
         return render(request, 'app/dashboard.html', context)
 
+
+
+
+def agency_generator(request):
+    agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
+    agency1 = Agency(Agency_name=agencies[0], Agency_phone=140)
+    agency1.save()
+    agency2 = Agency(Agency_name=agencies[1], Agency_phone=160)
+    agency2.save()
+    agency3 = Agency(Agency_name=agencies[2], Agency_phone=180)
+    agency3.save()
+    agency4 = Agency(Agency_name=agencies[3], Agency_phone=200)
+    agency4.save()
+    agency5 = Agency(Agency_name=agencies[4], Agency_phone=220)
+    agency5.save()
+    agency6 = Agency(Agency_name=agencies[5], Agency_phone=240)
+    agency6.save()
+    return render(request,'app/make_data.html')
+
+def plan_generator(request):
+
+    return render(request,'app/make_data.html')
+
+
 # 유저, 통신사, 가족 데이터 생성
 def testleft(request):
     rand_phonenum = 29823081
-    Family_id = 0
-    Agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
-    User_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
+    family_id = 0
+    agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
+    user_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
+    plan_key = []
+    data_useage_6 = {'1':0, '2':0, '3':0, '4':0, '5':0, '6':0}
 
-    Agency1 = Agency(Agency_name=Agencies[0], Agency_phone=140)
-    Agency1.save()
-    Agency2 = Agency(Agency_name=Agencies[1], Agency_phone=160)
-    Agency2.save()
-    Agency3 = Agency(Agency_name=Agencies[2], Agency_phone=180)
-    Agency3.save()
-    Agency4 = Agency(Agency_name=Agencies[3], Agency_phone=200)
-    Agency4.save()
-    Agency5 = Agency(Agency_name=Agencies[4], Agency_phone=220)
-    Agency5.save()
-    Agency6 = Agency(Agency_name=Agencies[5], Agency_phone=240)
-    Agency6.save()
-    # test plan
+    for i in range(1001, 1019+1): plan_key.append(i)
+    for i in range(2001, 2048+1): plan_key.append(i)
+    for i in range(3001, 3052+1): plan_key.append(i)
+    for i in range(4001, 4006+1): plan_key.append(i)
+    for i in range(5001, 5019+1): plan_key.append(i)
+    for i in range(6001, 6025+1): plan_key.append(i)
+    for i in range(1101, 1115+1): plan_key.append(i)
+    for i in range(2101, 2113+1): plan_key.append(i)
+    for i in range(3101, 3120+1): plan_key.append(i)
+    plan_key.append(4101)
+    for i in range(5101, 5102+1): plan_key.append(i)
+    for i in range(6101, 6102+1): plan_key.append(i)
+
     infp = INF_details(Plan_index=3, Plan_name='test', Plan_cost=300,
-                       Agency_name=Agency6,
+                       Agency_name=Agency.objects.get(Agency_name=agencies[0]),
                        Call_Limit=3, Message_Limit=3,
                        Month_limit=300, Day_limit=2)
     infp.save()
@@ -135,22 +162,45 @@ def testleft(request):
         name_selector2 = random.randint(0, 45)
         name_selector3 = random.randint(0, 45)
         content_selector = random.randint(0,5)
-        myuser = table.MyUser(phonenum=str(rand_phonenum),
-                              name=last_name[name_selector1]+first_name[name_selector2]+first_name[name_selector3],
-                              Plan_name=infp,
-                              data_useage='랜덤 생성 예정',
-                              message_useage=300,
-                              call_useage=300,
-                              User_contents=User_contents[content_selector],
-                              )
+        plan_selector = random.randint(0, 221)
+        message_dif = random.randint(0, 15)
+        call_dif = random.randint(0, 10)
+
+        if (plan_key[plan_selector]%1000)//100 == 0:
+            plan = NOR_details.objects.get(Plan_ID=plan_key[plan_selector])
+            for i in range(1, 6+1):
+                data_dif = random.randint(0, 5)/10
+                data_useage_6[str(i)] = abs(plan.Total_limit - data_dif)
+            myuser = table.MyUser(phonenum=str(rand_phonenum),
+                                  name=last_name[name_selector1]+first_name[name_selector2]+first_name[name_selector3],
+                                  Plan_name=plan,
+                                  data_useage=json.dumps(data_useage_6),
+                                  message_useage=abs(plan.Message_Limit - message_dif),
+                                  call_useage=abs(plan.Call_Limit - call_dif),
+                                  User_contents=user_contents[content_selector],
+                                  )
+        else:
+            plan = INF_details.objects.get(Plan_ID=plan_key[plan_selector])
+            for i in range(1, 6+1):
+                data_dif = random.randint(-3, 5)
+                data_useage_6[str(i)] = plan.Month_limit + data_dif
+            myuser = table.MyUser(phonenum=str(rand_phonenum),
+                                  name=last_name[name_selector1] + first_name[name_selector2] + first_name[
+                                      name_selector3],
+                                  Plan_name=plan,
+                                  data_useage=json.dumps(data_useage_6),
+                                  message_useage=abs(plan.Message_Limit - message_dif),
+                                  call_useage=abs(plan.Call_Limit - call_dif),
+                                  User_contents=user_contents[content_selector],
+                                  )
 
         myuser.save()
         if (i%2) == 0:
-            Family_id += 1
+            family_id += 1
             Agency_selector = random.randint(0, 8) % 6
             family = table.Family(Family_User=myuser,
-                                  Family_id=Family_id,
-                                  agency_name=Agency.objects.get(Agency_name=Agencies[Agency_selector])
+                                  Family_id=family_id,
+                                  agency_name=Agency.objects.get(Agency_name=agencies[Agency_selector])
                                   )
             family.save()
 

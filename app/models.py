@@ -160,7 +160,7 @@ class Agency(models.Model):
 
 class Plan(models.Model):
     Plan_index = models.PositiveIntegerField(primary_key=True, null=False)
-    Plan_cost = models.PositiveIntegerField()
+    Plan_cost = models.PositiveIntegerField(10, null=False)
     Plan_name = models.CharField(max_length=20, null=False)
     Agency_name = models.ForeignKey(
         'Agency',

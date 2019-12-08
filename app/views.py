@@ -43,7 +43,7 @@ class MyUserView(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class =MyUserSerializer
     def perform_create(self, serializer):
-        serializer.save(plan=self.request.agency, family=self.request.family)
+        serializer.save()
 
 
 class AgencyView(viewsets.ModelViewSet):
@@ -209,11 +209,7 @@ def make_user():
 # 유저, 통신사, 가족 데이터 생성
 def testleft(request):
     make_plan_table()
-
-
-def plan_data():
-    random.randint()
-
+    return render(request,'app/make_data.html')
 
 def recommend():    # 요금제 추천해주는 시스템.
     return 0
@@ -222,8 +218,8 @@ def testright(request):
     make_user()
     return render(request,'app/make_data.html')
 
-def make_inf_json():
-    return None
+
+
 
 def make_plan_json(Plan_list):
     plan_data = OrderedDict()
@@ -233,19 +229,50 @@ def make_plan_json(Plan_list):
     plan_data["Agency_name"] = Plan_list[1]
     plan_data["Call_Limit"] = Plan_list[8]
     plan_data["Message_Limit"] = Plan_list[9]
+
     if plan_data["Call_Limit"] == '기본제공':
         plan_data["Call_Limit"] = 999999
+
     elif plan_data["Call_Limit"] == "X":
         plan_data["Call_Limit"] = 0
+
     if plan_data["Message_Limit"] == '기본제공':
         plan_data["Message_Limit"] = 999999
+
     elif plan_data["Message_Limit"] == "X":
         plan_data["Message_Limit"] = 0
 
-    plan_data = json.dumps(plan_data, ensure_ascii=False, indent="\t").encode('utf-8')
     return plan_data
-def make_nor_json():
-    return None
+
+def make_inf_json(Plan_list, planjson):
+    planjson["Month_limit"] = Plan_list[6]
+    planjson["Day_limit"] = Plan_list[7]
+
+    if planjson["Month_limit"] == '기본제공':
+        planjson["Month_limit"] = 999999.
+
+    elif planjson["Month_limit"] == "X":
+        planjson["Month_limit"] = 0.
+
+    if planjson["Day_limit"] == "X":
+        planjson["Day_limit"] = 0.
+    infjson = json.dumps(planjson, ensure_ascii=False, indent="\t").encode('utf-8')
+
+
+    return infjson
+
+def make_nor_json(Plan_list, planjson):
+    planjson["Total_limit"] = Plan_list[6]
+
+    if planjson["Total_limit"] == '기본제공':
+        planjson["Total_limit"] = 999999.
+
+    elif planjson["Total_limit"] == "X":
+        planjson["Total_limit"] = 0.
+    norjson = json.dumps(planjson, ensure_ascii=False, indent="\t").encode('utf-8')
+
+    return norjson
+
 
 def make_plan_table():
     load_wb = load_workbook("app/static/app/data.xlsx", data_only=True)
@@ -261,11 +288,17 @@ def make_plan_table():
     for value in all_values:
         is_inf = value[4]
         plan_json = make_plan_json(value)
+        inf_json = plan_json.copy()
+        nor_json = plan_json.copy()
+
+        inf_json = make_inf_json(value, inf_json)
+        nor_json = make_nor_json(value,nor_json)
 
         if(is_inf == "O"):      #무한
-            requests.post("http://127.0.0.1:8000/planapi/", headers=headers ,data=plan_json)
+            requests.post("http://127.0.0.1:8000/infapi/", headers=headers ,data=inf_json)
         else:                   #무제한 아닌거
-            requests.post("http://127.0.0.1:8000/planapi/", headers=headers, data=plan_json)
+            requests.post("http://127.0.0.1:8000/norapi/", headers=headers ,data=nor_json)
+
 
 
 

@@ -16,7 +16,7 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             phonenum=phonenum,
             password=password,
-            name= name
+            name=name
         )
         user.is_superuser = True
         user.save(using=self._db)
@@ -27,7 +27,7 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser, PermissionsMixin):
     phonenum = models.CharField(primary_key=True, max_length=20)    #PK
     name = models.CharField(max_length=10)      #이름
-    Plan_name = models.ForeignKey(
+    Plan_ID = models.ForeignKey(
         'Plan',
         on_delete=models.CASCADE,
         null=False,
@@ -175,6 +175,8 @@ class Plan(models.Model):
         db_table = 'Plan_table'
         verbose_name = '요금제'
         verbose_name_plural = '요금제들'
+    def __str__(self):
+        return self.Plan_name
 
 class INF_details(Plan):
     Month_limit = models.FloatField("Month_limit", null=False)

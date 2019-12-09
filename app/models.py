@@ -33,9 +33,16 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         null=False,
         blank=False
     )
-    data_useage = models.TextField()    #데이터 사용량
-    message_useage = models.PositiveIntegerField("message_useage", null=False, default=0)    #메시지 사용량
-    call_useage = models.PositiveIntegerField("call_useage", null=False, default=0)       #전화 사용량
+    Family_ID = models.ForeignKey(
+        'Family',
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
+    age = models.PositiveIntegerField("age", null=False)
+    data_usage = models.TextField()    #데이터 사용량
+    message_usage = models.PositiveIntegerField("message_usage", null=False, default=0)    #메시지 사용량
+    call_usage = models.PositiveIntegerField("call_usage", null=False, default=0)       #전화 사용량
 
     User_contents = models.CharField(max_length=10)
     # Family_number = models.ForeignKey(
@@ -45,9 +52,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     #     null=True
     # ) 가족이 FK로 유저의 phone num을 참조하는게 맞을것같습니다.
 
-
     USERNAME_FIELD = 'phonenum'
-    REQUIRED_FIELDS = ['name', 'Plan_name', 'message_useage', 'call_useage']
+    REQUIRED_FIELDS = ['name', 'Plan_name', 'message_usage', 'call_usage']
     objects = MyUserManager()
 
     class Meta:
@@ -79,12 +85,13 @@ def JSON_to_MyUser(json_str):
 
     myuser.phonenum = dict['phonenum']
     myuser.name = dict['name']
-    myuser.data_useage = dict['data_useage']
-    myuser.message_useage = dict['message_useage']
-    myuser.call_useage = dict['call_useage']
-    myuser.User_content = dict['User_contents']
-    myuser.Plan_name = dict['Plan_name']
-    myuser.Family_number = dict['Family_number']
+    myuser.data_usage = dict['data_usage']
+    myuser.message_usage = dict['message_usage']
+    myuser.call_usage = dict['call_usage']
+    myuser.User_contents = dict['User_contents']
+    myuser.Plan_ID = Plan.objects.get(pk=dict['Plan_ID'])
+    myuser.Family_ID = Family.objects.get(pk=dict['Family_ID'])
+    myuser.age = dict['age']
     return myuser
 
 class NewUser:
@@ -125,13 +132,6 @@ def JSON_To_NewUser(json_str):
 """
 #가족 엔티티
 class Family(models.Model):
-    # 가족 엔티티가 유저 엔티티를 외래키 참조하도록 변경했습니다.
-    Family_User = models.ForeignKey(
-        'MyUser',
-        on_delete=models.CASCADE,
-        null=False,
-        blank=False
-    )
     Family_id = models.IntegerField("Family_id", primary_key=True, null=False)
     agency_name = models.ForeignKey(
         'Agency',
@@ -139,14 +139,10 @@ class Family(models.Model):
         blank=True,
         null=True,
     )
-
     class Meta:
         db_table = 'Family_table'
         verbose_name = '가족'
         verbose_name_plural = '가족들'
-    
-    def __str__(self):
-        return self.Family_id
 
 #통신사 엔티티
 class Agency(models.Model):
@@ -163,6 +159,7 @@ class Plan(models.Model):
     Plan_cost = models.PositiveIntegerField("Plan_cost", null=False)
     Plan_name = models.CharField(max_length=50, null=False)
     Plan_ID = models.PositiveIntegerField("Plan_ID", null=False, primary_key=True)
+    age =models.PositiveIntegerField('age', null=False)
     Agency_name = models.ForeignKey(
         'Agency',
         on_delete=models.CASCADE,           #통신사 사라지면 요금제도 당연히 사라져야 하므로

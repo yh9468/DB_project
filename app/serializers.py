@@ -5,38 +5,39 @@ from .models import MyUser, Plan, Family, Agency, INF_details, NOR_details      
 class InfdetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = INF_details
-        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Plan_cost', 'Plan_ID'
+        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Plan_cost', 'Plan_ID','age'
                   ,'Month_limit', 'Day_limit')
         exclude = ()
 
 class NordetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = NOR_details
-        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Total_limit', 'Plan_cost', 'Plan_ID')
+        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Total_limit', 'Plan_cost', 'Plan_ID', 'age')
         exclude = ()
 
 
-class FamilySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Family
-        fields = ('Family_id', 'agency_name')
-        exclude = ()
 
 
 class MyUserSerializer(serializers.ModelSerializer):
-    family = FamilySerializer(read_only=True)
     class Meta:
         model = MyUser
         field=('phonenum', 'password', 'name', 'data_usage','message_usage',
-               'call_usage', 'user_contents', 'family_number', 'plan_name', 'family')
-        exclude = ('password','user_permissions','groups','is_superuser', 'last_login',)     #api 에서 제공되는 것을 제거하는것.
+               'call_usage', 'User_contents', 'Family_ID', 'Plan_ID', 'age')
+        exclude = ('user_permissions','groups','is_superuser', 'last_login',)     #api 에서 제공되는 것을 제거하는것.
+
+class FamilySerializer(serializers.ModelSerializer):
+    myuser = MyUserSerializer(many=True, read_only=True)
+    class Meta:
+        model = Family
+        fields = ('Family_id', 'agency_name', 'myuser')
+        exclude = ()
 
 
 class PlanSerializer(serializers.ModelSerializer):
     user = MyUserSerializer(many=True, read_only=True)
     class Meta:
         model = Plan
-        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Plan_cost', 'Plan_ID' , 'user')
+        fields = ('Plan_name', 'Call_Limit', 'Message_Limit', 'Agency_name', 'Plan_cost', 'Plan_ID' , 'user', 'age')
         exclude = ()
 
 

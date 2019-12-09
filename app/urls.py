@@ -95,8 +95,9 @@ urlpatterns = [
     path('familyapi/<int:pk>', Family_detail, name='family_detail'),
 
     path('makedata/',views.make_data, name="make_data"),
-    path('selectleft/', views.testleft, name='test_left'),
-    path('selectright/',views.testright,name='test_right'),
+    path('make_agency_plan/', views.make_plan_agency_btn, name='make_agency_plan'),
+    path('make_user/',views.make_user_btn,name='make_user'),
+    path('make_family/',views.make_family_btn,name='make_family'),
 
     path('', views.index, name='index'),
     path('dashboard/',views.dashboard, name='dashboard'),

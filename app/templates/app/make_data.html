@@ -137,24 +137,28 @@ input[type=submit]:hover {
 
 <div class="container">
     <div class="row">
-        <div class="col"> <h2 style="text-align:center">3개 table 만들기</h2></div>
-        <div class="col"> <h2 style="text-align:center">회원 만개씩 만들기.</h2></div>
+        <div class="col"> <h2 style="text-align:center">나머지 테이블 </h2></div>
+        <div class="col"> <h2 style="text-align:center">유저 테이블 만들기.</h2></div>
       <div class="vl">
         <span class="vl-innertext">or</span>
       </div>
 
       <div class="col">
-          <form action="{% url 'test_left' %}" method="get">
-        <button type="submit" class="google btn"> 3개 table 만들기</button>
+          <form action="{% url 'make_agency_plan' %}" method="get">
+        <button type="submit" class="google btn"> plan agency 테이블</button>
           </form>
       </div>
 
         <div class="col">
-            <form action='{% url 'test_right' %}' method="get">
-                <button type="submit" class="twitter btn">유저 1만개 만들기</button>
+            <form action='{% url 'make_user' %}' method="get">
+                <button type="submit" class="twitter btn">유저 5000개</button>
             </form>
-
-        </div>
+         </div>
+        <div class="col">
+          <form action="{% url 'make_family' %}" method="get">
+        <button type="submit" class="google btn"> family 2500개 </button>
+          </form>
+      </div>
 
 
     </div>

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+import string
 from django.contrib.auth import login, authenticate
 import django.contrib.auth as auth
 import requests
@@ -84,7 +85,7 @@ def newuserform(request):
         Check_INF = request.POST['Check_INF']
         request.session['user_id'] = "0000"
         newuser = NewUser('0000',name, age, main_content, data_usage, Agency_name, Check_INF)
-        request.session['newuser'] = newuser.toJSON() #json 변환.
+        request.session['newuser'] = newuser.toJSON()                       #json 변환.
         return redirect('dashboard')
     # get
     else:
@@ -96,7 +97,7 @@ def dashboard(request):
     if user_id == "0000":
         newuser = request.session['newuser']
         newuser = JSON_To_NewUser(newuser)
-        context = {'user' : newuser}
+        context = {'user':newuser}
         return render(request, 'app/dashboard.html', context)
 
     # 로그인 하는 경우
@@ -111,8 +112,11 @@ def dashboard(request):
 
 
 
-def agency_generator(request):
-    agencies = ['KT', 'SKT', 'LG', 'CKT', 'CSKT', 'CLG']
+def recommend():    # 요금제 추천해주는 시스템.
+    return 0
+
+def agency_generator():
+    agencies = ['KT', 'SKT', 'LGU+', 'C_SKT', 'C_KT', 'C_LGU+']
     agency1 = Agency(Agency_name=agencies[0], Agency_phone=140)
     agency1.save()
     agency2 = Agency(Agency_name=agencies[1], Agency_phone=160)
@@ -125,18 +129,46 @@ def agency_generator(request):
     agency5.save()
     agency6 = Agency(Agency_name=agencies[5], Agency_phone=240)
     agency6.save()
-    return render(request,'app/make_data.html')
 
 def plan_generator(request):
     return render(request,'app/make_data.html')
 
+# 유저, 통신사, 가족 데이터 생성
+def make_plan_agency_btn(request):
+    agency_generator()
+    make_plan_table()
+    return render(request,'app/make_data.html')
+
+def make_user_btn(request):
+    make_user()
+    return render(request,'app/make_data.html')
+
+def make_family_btn(request):
+    make_family()
+    return render(request, 'app/make_data.html')
+
 def make_user():
-    rand_phonenum = 29823081
-    family_id = 0
+    plan_key = []
+    _LENGTH = 8
+    string_pool = string.digits
     agencies = ['KT', 'SKT', 'LGU+', 'C_SKT', 'C_KT', 'C_LGU+']
     user_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
-    plan_key = []
-    data_useage_6 = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
+    data_usage_6 = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
+
+    family_response = requests.get("http://127.0.0.1:8000/familyapi")
+    family_json = family_response.json()
+    family_length = len(family_json)
+
+    user_response = requests.get("http://127.0.0.1:8000/api")
+    user_json = user_response.json()
+    user_length = len(user_json)
+    print(user_length)
+
+    norplan = requests.get("http://127.0.0.1:8000/norapi/")
+    norplan = norplan.json()
+
+    infplan = requests.get("http://127.0.0.1:8000/infapi/")
+    infplan = infplan.json()
 
     for i in range(1001, 1019 + 1): plan_key.append(i)
     for i in range(2001, 2048 + 1): plan_key.append(i)
@@ -151,74 +183,78 @@ def make_user():
     for i in range(5101, 5102 + 1): plan_key.append(i)
     for i in range(6101, 6102 + 1): plan_key.append(i)
 
-    infp = INF_details(Plan_ID=3, Plan_name='test', Plan_cost=300,
-                       Agency_name=Agency.objects.get(Agency_name=agencies[0]),
-                       Call_Limit=3, Message_Limit=3,
-                       Month_limit=300, Day_limit=2)
-    infp.save()
-    for i in range(0, 10000):
-        rand_phonenum += random.randint(1, 2)
+    for i in range(0, 5000):
+        data_usage_6 = {}
+        rand_phonenum = ""
+        for k in range(_LENGTH):
+            rand_phonenum+=random.choice(string_pool)
         name_selector1 = random.randint(0, 29)
         name_selector2 = random.randint(0, 45)
         name_selector3 = random.randint(0, 45)
         content_selector = random.randint(0, 5)
         plan_selector = random.randint(0, 221)
-        message_dif = random.randint(0, 15)
-        call_dif = random.randint(0, 10)
+        message_usage = random.randint(1,300)
+        call_usage = random.randint(10,250)
+        user_data = OrderedDict()
 
         if (plan_key[plan_selector] % 1000) // 100 == 0:
-            plan = NOR_details.objects.get(Plan_ID=plan_key[plan_selector])
-            for i in range(1, 6 + 1):
-                data_dif = random.randint(0, 5) / 10
-                data_useage_6[str(i)] = abs(plan.Total_limit - data_dif)
-            myuser = table.MyUser(phonenum=str(rand_phonenum),
-                                  name=last_name[name_selector1] + first_name[name_selector2] + first_name[
-                                      name_selector3],
-                                  Plan_name=plan,
-                                  data_useage=json.dumps(data_useage_6),
-                                  message_useage=abs(plan.Message_Limit - message_dif),
-                                  call_useage=abs(plan.Call_Limit - call_dif),
-                                  User_contents=user_contents[content_selector],
-                                  )
+            plan = norplan
         else:
-            plan = INF_details.objects.get(Plan_ID=plan_key[plan_selector])
-            for i in range(1, 6 + 1):
-                data_dif = random.randint(-3, 5)
-                data_useage_6[str(i)] = plan.Month_limit + data_dif
-            myuser = table.MyUser(phonenum=str(rand_phonenum),
-                                  name=last_name[name_selector1] + first_name[name_selector2] + first_name[
-                                      name_selector3],
-                                  Plan_name=plan,
-                                  data_useage=json.dumps(data_useage_6),
-                                  message_useage=abs(plan.Message_Limit - message_dif),
-                                  call_useage=abs(plan.Call_Limit - call_dif),
-                                  User_contents=user_contents[content_selector],
-                                  )
+            plan = infplan
 
-        myuser.save()
-        if (i % 2) == 0:
-            family_id += 1
-            Agency_selector = random.randint(0, 8) % 6
-            family = table.Family(Family_User=myuser,
-                                  Family_id=family_id,
-                                  agency_name=Agency.objects.get(Agency_name=agencies[Agency_selector])
-                                  )
-            family.save()
+        for plane_info in plan:
+            if plane_info["Plan_ID"] == plan_key[plan_selector]:
+                plan_data = plane_info
 
+        if (plan_key[plan_selector] % 1000) // 100 == 0:
+            for data_usage_1 in range(1, 6 + 1):
+                data_dif = random.randint(0, 50) / 100
+                data_usage_6[str(data_usage_1)] = round(abs(plan_data["Total_limit"] - data_dif),2)
 
-# 유저, 통신사, 가족 데이터 생성
-def testleft(request):
-    make_plan_table()
-    return render(request,'app/make_data.html')
+        else:
+            for data_usage_1 in range(1, 6 + 1):
+                data_dif = random.randint(-1, 20)
+                data_usage_6[str(data_usage_1)] = round(abs(plan_data["Month_limit"] + data_dif),2)
 
-def recommend():    # 요금제 추천해주는 시스템.
-    return 0
+        user_data["phonenum"] = "010" + rand_phonenum
+        user_data["name"] = last_name[name_selector1] + first_name[name_selector2] + first_name[name_selector3]
+        if plan_data["age"] == 18:
+            user_data["age"] = random.randint(10, 18)
+        elif plan_data["age"] == 24:
+            user_data["age"] = random.randint(10, 24)
+        elif plan_data["age"] == 65:
+            user_data["age"] = random.randint(65, 100)
+        else:
+            user_data["age"] = random.randint(10, 100)
 
-def testright(request):
-    make_user()
-    return render(request,'app/make_data.html')
+        data_usage_6 = str(data_usage_6)
+        user_data["Plan_ID"] = plan_key[plan_selector]
+        user_data["data_usage"] = data_usage_6
+        user_data["message_usage"] = abs(message_usage)
+        user_data["call_usage"] = abs(call_usage)
+        user_data["User_contents"] = user_contents[content_selector]
+        user_data["password"] = "0000"
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
 
+        Family_ID = random.randint(1,family_length+1)
+        user_data["Family_ID"] = Family_ID
 
+        user_json = json.dumps(user_data, ensure_ascii=False, indent="\t").encode('utf-8')
+        requests.post("http://127.0.0.1:8000/api/", headers=headers, data=user_json)
+
+#family 2500 개씩 만들기.
+def make_family():
+    family_response = requests.get("http://127.0.0.1:8000/familyapi/")
+    length = len(family_response.json())
+    agencies = ['KT', 'SKT', 'LGU+', 'C_SKT', 'C_KT', 'C_LGU+']
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+
+    for family_id in range(length+1 , length+2501):
+        family_data = OrderedDict()
+        family_data['Family_id'] = family_id
+        family_data['agency_name'] = agencies[random.randint(0,8) % 6]
+        family_data = json.dumps(family_data, ensure_ascii=False, indent="\t").encode('utf-8')
+        requests.post("http://127.0.0.1:8000/familyapi/", headers=headers, data=family_data)
 
 
 def make_plan_json(Plan_list):
@@ -229,6 +265,7 @@ def make_plan_json(Plan_list):
     plan_data["Agency_name"] = Plan_list[1]
     plan_data["Call_Limit"] = Plan_list[8]
     plan_data["Message_Limit"] = Plan_list[9]
+    plan_data['age'] = Plan_list[5]
 
     if plan_data["Call_Limit"] == '기본제공':
         plan_data["Call_Limit"] = 999999
@@ -241,6 +278,9 @@ def make_plan_json(Plan_list):
 
     elif plan_data["Message_Limit"] == "X":
         plan_data["Message_Limit"] = 0
+
+    if plan_data['age'] == "X":
+        plan_data['age'] = 0
 
     return plan_data
 
@@ -332,7 +372,7 @@ def signin(request):
                 return response
             return redirect('dashboard')
         else:           #로그인 실패
-            return render(request, 'app/login.html'), {'error':'username or password is incorrect'}
+            return render(request, 'app/login.html', {'error':'username or password is incorrect'})
 
     else:           #get
         return render(request, 'app/login.html')

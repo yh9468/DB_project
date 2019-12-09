@@ -43,7 +43,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     age = models.PositiveIntegerField("age", null=False)
     data_usage = models.TextField()    #데이터 사용량
     message_usage = models.PositiveIntegerField("message_usage", null=False, default=0)    #메시지 사용량
-    call_usage = models.PositiveIntegerField("call_usage", null=False, default=0)       #전화 사용량
+    call_usage = models.PositiveIntegerField("call_usage", null=False, default=0)     #전화 사용량
 
     User_contents = models.CharField(max_length=10)
     # Family_number = models.ForeignKey(
@@ -61,6 +61,10 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         db_table = 'User_table'
         verbose_name = '유저'
         verbose_name_plural = '유저들'
+        index_together = unique_together = [
+            ['use_max', 'phonenum'],
+            ['Family_ID', 'phonenum']
+        ]
 
     #클래스를 어떻게 표현할 것인지에 대해서
     def __str__(self):

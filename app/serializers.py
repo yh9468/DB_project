@@ -22,7 +22,7 @@ class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         field=('phonenum', 'password', 'name', 'data_usage','message_usage',
-               'call_usage', 'User_contents', 'Family_ID', 'Plan_ID', 'age')
+               'call_usage', 'User_contents', 'Family_ID', 'Plan_ID', 'age', 'use_max')
         exclude = ('user_permissions','groups','is_superuser', 'last_login',)     #api 에서 제공되는 것을 제거하는것.
 
 class FamilySerializer(serializers.ModelSerializer):

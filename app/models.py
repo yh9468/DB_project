@@ -27,6 +27,7 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser, PermissionsMixin):
     phonenum = models.CharField(primary_key=True, max_length=20)    #PK
     name = models.CharField(max_length=10)      #이름
+    use_max = models.FloatField("use_max", null=False)
     Plan_ID = models.ForeignKey(
         'Plan',
         on_delete=models.CASCADE,
@@ -92,6 +93,7 @@ def JSON_to_MyUser(json_str):
     myuser.Plan_ID = Plan.objects.get(pk=dict['Plan_ID'])
     myuser.Family_ID = Family.objects.get(pk=dict['Family_ID'])
     myuser.age = dict['age']
+    myuser.use_max = dict['use_max']
     return myuser
 
 class NewUser:

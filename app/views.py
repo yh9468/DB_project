@@ -153,7 +153,7 @@ def make_user():
     string_pool = string.digits
     agencies = ['KT', 'SKT', 'LGU+', 'C_SKT', 'C_KT', 'C_LGU+']
     user_contents = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업']
-    data_usage_6 = {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0}
+    month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     family_response = requests.get("http://127.0.0.1:8000/familyapi")
     family_json = family_response.json()
@@ -186,6 +186,7 @@ def make_user():
     for i in range(0, 5000):
         data_usage_6 = {}
         rand_phonenum = ""
+        use_max = 0
         for k in range(_LENGTH):
             rand_phonenum+=random.choice(string_pool)
         name_selector1 = random.randint(0, 29)
@@ -207,14 +208,19 @@ def make_user():
                 plan_data = plane_info
 
         if (plan_key[plan_selector] % 1000) // 100 == 0:
-            for data_usage_1 in range(1, 6 + 1):
+            for data_usage_1 in range(0, 12):
                 data_dif = random.randint(0, 50) / 100
-                data_usage_6[str(data_usage_1)] = round(abs(plan_data["Total_limit"] - data_dif),2)
-
+                data_usage_6[month[data_usage_1]] = round(abs(plan_data["Total_limit"] - data_dif),2)
+                use_max = max(use_max, data_usage_6[month[data_usage_1]])
         else:
             for data_usage_1 in range(1, 6 + 1):
                 data_dif = random.randint(-1, 20)
-                data_usage_6[str(data_usage_1)] = round(abs(plan_data["Month_limit"] + data_dif),2)
+                if plan_data["Month_limit"] == 999999:
+                    data_usage_6[month[data_usage_1]] = round(abs(30 + data_dif),2)
+                else:
+                    data_usage_6[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
+                use_max = max(use_max, data_usage_6[month[data_usage_1]])
+
 
         user_data["phonenum"] = "010" + rand_phonenum
         user_data["name"] = last_name[name_selector1] + first_name[name_selector2] + first_name[name_selector3]
@@ -229,6 +235,7 @@ def make_user():
 
         data_usage_6 = str(data_usage_6)
         user_data["Plan_ID"] = plan_key[plan_selector]
+        user_data["use_max"] = use_max
         user_data["data_usage"] = data_usage_6
         user_data["message_usage"] = abs(message_usage)
         user_data["call_usage"] = abs(call_usage)

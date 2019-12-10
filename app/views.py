@@ -49,7 +49,6 @@ class MyUserView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
-
 class AgencyView(viewsets.ModelViewSet):
     queryset = Agency.objects.all()
     serializer_class = AgencySerializer
@@ -158,38 +157,6 @@ def dashboard(request):
         context = {'user': user, 'use': use, 'plan_data': plan_data, 'recommend': recommend}
 
         return render(request, 'app/dashboard.html', context)
-
-def most_plan(request):
-    # 현재 접속중인 세션 기준으로 phonenum을 받아온다
-    phonenum = request.session['user_id']
-    # json 형식의 user_plan을 가져옴
-    user_plan = requests.get("http://127.0.0.1:8000/api/" + phonenum)
-    user_plan = user_plan.json()
-    # 유저의 데이터 사용량 기반 타겟 범위 설정
-    user_data_useage = user_plan['use_max']
-    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
-    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
-    # 범위에 맞는 플랜을 모두 찾아온다
-    users_plan = list(MyUser.objects.filter(use_max__gte=target_min, use_max__lte=target_max).values('Plan_ID'))
-
-    # Plan ID를 추출한다
-    plan_id = []
-    for plan_info in users_plan:
-        plan_id.append(plan_info['Plan_ID'])
-
-    # Counter 통해 가장 많이 등장한 Plan_ID순으로 cnt 저장
-    cnt = Counter(plan_id).most_common(2)
-
-    # 가장 많이 등장한 plan id 2개에 대한 쿼리셋을 얻은 뒤 이를 합친다
-    q1 = Plan.objects.filter(Plan_ID=cnt[0][0])
-    if len(cnt) == 2:
-        q2 = Plan.objects.filter(Plan_ID=cnt[1][0])
-    most2 = q1|q2
-    print(most2)
-
-    # 반환
-    return most2
-
 
 def recommend():    # 요금제 추천해주는 시스템.
     return 0
@@ -670,29 +637,19 @@ def most_plan(request):
 
     use_data = requests.get("http://127.0.0.1:8000/useapi/" + phonenum)
     use_data = use_data.json()
-    use_data = use_data[0]
 
     # 유저의 데이터 사용량 기반 타겟 범위 설정
-    user_data_useage = use_data['Use_max']
+    user_data_useage = use_data[0]['Use_max']
     target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
     target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
     # 범위에 맞는 플랜을 모두 찾아온다
-    users_plan = list(Use_detail.objects.filter(use_max__gte=target_min, use_max__lte=target_max).values('Plan_ID'))
-
-    # Plan ID를 추출한다
+    # 타겟 값을 통해 폰번호를 추출 -> 폰번호로 다시 오브젝트 필터를 씌워서 plan 추출 -> 플랜 번호로 ->
+    users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
     plan_id = []
-    for plan_info in users_plan:
-        plan_id.append(plan_info['Plan_ID'])
-
-    # Counter 통해 가장 많이 등장한 Plan_ID순으로 cnt 저장
+    for item in users_search:
+        plan_id.append(str(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID))
     cnt = Counter(plan_id).most_common(2)
-
-    # 가장 많이 등장한 plan id 2개에 대한 쿼리셋을 얻은 뒤 이를 합친다
-    q1 = Plan.objects.filter(Plan_ID=cnt[0][0])
-    if len(cnt) == 2:
-        q2 = Plan.objects.filter(Plan_ID=cnt[1][0])
-    most2 = q1|q2
-    print(most2)
-
-    # 반환
-    return most2
+    print(cnt)
+    # 리턴 형식은 tuples in list
+    # Ex: [('순선택 100분 250MB', 37), ('LTE WARP 골든 150', 34)]
+    return cnt

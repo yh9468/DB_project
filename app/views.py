@@ -4,6 +4,7 @@ import string
 from django.contrib.auth import login, authenticate
 import django.contrib.auth as auth
 import requests
+from rest_framework import generics
 import json
 from collections import OrderedDict
 from django.contrib import messages
@@ -16,6 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 import app.models
 import app.models as table
+from rest_framework.response import Response
 import random
 import json
 import os
@@ -74,6 +76,13 @@ class UsedetailView(viewsets.ModelViewSet):
     serializer_class = UseSerializer
     def perform_create(self, serializer):
         serializer.save()
+
+class Use_detail_List(generics.ListAPIView):
+    serializer_class = UseSerializer
+    def get_queryset(self):
+        phonenum = self.kwargs['phonenum']
+        return Use_detail.objects.filter(phonenum__phonenum=phonenum)
+
 
 def make_data(request):
     return render(request,'app/make_data.html')

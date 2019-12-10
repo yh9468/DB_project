@@ -1,4 +1,5 @@
 from django.urls import path, include
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -105,7 +106,7 @@ urlpatterns = [
     path('familyapi/',Family_list, name='family_list'),
     path('familyapi/<int:pk>', Family_detail, name='family_detail'),
     path('useapi/', use_detail_list, name='use_list'),
-    path('useapi/<str:pk>', use_detail_detail, name='use_detail'),
+    path('useapi/<str:phonenum>', views.Use_detail_List.as_view(), name='use_detail'),
 
     path('makedata/',views.make_data, name="make_data"),
     path('make_agency_plan/', views.make_plan_agency_btn, name='make_agency_plan'),

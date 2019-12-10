@@ -18,6 +18,11 @@
   <!-- Custom styles for this template-->
   <link href='{% static "app/dashboard/css/sb-admin-2.min.css" %}' rel="stylesheet">
 
+    <style>
+    .ex1{
+        margin-left: 30px;
+    }
+    </style>
 </head>
 
 <body id="page-top">
@@ -200,14 +205,14 @@
             <!-- Nav Item - Alerts -->
             <li class="nav-item dropdown no-arrow mx-1">
               <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell fa-fw"></i>
+                  <i class="fab">setting</i>
+
                 <!-- Counter - Alerts -->
-                <span class="badge badge-danger badge-counter">3+</span>
               </a>
               <!-- Dropdown - Alerts -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                 <h6 class="dropdown-header">
-                  Alerts Center
+                  추천 버튼
                 </h6>
                 <a class="dropdown-item d-flex align-items-center" href="#">
                   <div class="mr-3">
@@ -216,8 +221,7 @@
                     </div>
                   </div>
                   <div>
-                    <div class="small text-gray-500">December 12, 2019</div>
-                    <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                    <span class="font-weight-bold" href="">최적의 요금제를 추천해 드립니다!</span>
                   </div>
                 </a>
                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -227,7 +231,6 @@
                     </div>
                   </div>
                   <div>
-                    <div class="small text-gray-500">December 7, 2019</div>
                     $290.29 has been deposited into your account!
                   </div>
                 </a>
@@ -238,7 +241,6 @@
                     </div>
                   </div>
                   <div>
-                    <div class="small text-gray-500">December 2, 2019</div>
                     Spending Alert: We've noticed unusually high spending for your account.
                   </div>
                 </a>
@@ -375,7 +377,7 @@
 
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="Total_data"></div>
                         <script>
-
+                                var phonenum = {{ user.phonenum }};
                                var Jan = {{ use.Jan }}; var Feb = {{ use.Feb }}; var Mar = {{ use.Mar }}; var Apr = {{ use.Apr }}; var May = {{ use.May }}; var Jun = {{ use.Jun }}; var Jul = {{ use.Jul }};
                                 var Aug = {{ use.Aug }}; var Sep = {{ use.Sep }}; var Oct = {{ use.Oct }}; var Nov = {{ use.Nov }}; var Dec = {{ use.Dec }};
                                 var total = Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec;
@@ -434,16 +436,28 @@
             </div>
 
             <!-- Pending Requests Card Example -->
+
+
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">recommended Plan</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">5.9 요금제</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="recommend_plan">'{{ recommend }}'</div>
                     </div>
-                    <div class="col-auto">
-                      <i class="fas fa-comments fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+               <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">recommended Plan</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800" id="recommend_plan">'{{ recommend }}'</div>
                     </div>
                   </div>
                 </div>

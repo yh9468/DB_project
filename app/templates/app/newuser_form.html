@@ -23,16 +23,25 @@
     </div>
       <label for="main_content">주 사용처 (select one) :</label>
       <select class="form-control" id="main_content" name="main_content">
-        <option>비디오</option>
+        <option>통화</option>
+        <option>영상시청</option>
+        <option>커뮤니티</option>
         <option>게임</option>
-        <option>SNS</option>
-        <option>음악</option>
-        <option>인터넷 서핑</option>
+        <option>웹서핑</option>
+        <option>작업</option>
       </select>
       <br>
     <div class="form-group">
       <label for="data_usage">데이터 사용량(MB) :</label>
         <input type="number" min = 0 max=999999 class="form-control" id="data_usage" placeholder="Enter Usage" name="data_usage">
+    </div>
+      <div class="form-group">
+      <label for="data_usage">통화 사용량(분) :</label>
+        <input type="number" min = 0 max=999999 class="form-control" id="Call_usage" placeholder="Enter Usage" name="Call_usage">
+    </div>
+        <div class="form-group">
+      <label for="data_usage">메시지 사용량(통) :</label>
+        <input type="number" min = 0 max=999999 class="form-control" id="Message_usage" placeholder="Enter Usage" name="Message_usage">
     </div>
    <div class="form-group">
       <label for="Agency_name">가족 통신사 (select one):</label>
@@ -40,7 +49,6 @@
         <option>SKT</option>
         <option>KT</option>
         <option>U+</option>
-        <option>알뜰폰</option>
       </select>
     </div>
         <label>무제한 여부</label>
@@ -50,6 +58,16 @@
             </label>
             <label class="radio-inline">
                 <input type="radio" name="Check_INF" value="no"> 아니오
+            </label>
+      <br>
+      <br>
+      <label>알뜰폰 여부</label>
+        <br>
+            <label class="radio-inline">
+                <input type="radio" name="Check_cheap" value="yes" checked> 예
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="Check_cheap" value="no"> 아니오
             </label>
       <br>
       <br>

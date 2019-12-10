@@ -138,7 +138,7 @@ def JSON_to_use(json_str):
     return myuse
 
 class NewUser:
-    def __init__(self,phonenum, name, age, main_content, data_usage, Agency_name, Check_INF):
+    def __init__(self,phonenum, name, age, main_content, data_usage, call_usage, message_usage, Agency_name, Check_INF, Check_cheap):
         self.phonenum = phonenum
         self.name = name
         self.age = age
@@ -146,6 +146,9 @@ class NewUser:
         self.data_usage = data_usage
         self.Agency_name = Agency_name
         self.Check_INF = Check_INF
+        self.Check_cheap = Check_cheap
+        self.Call_usage = call_usage
+        self.Message_usage = message_usage
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
@@ -160,7 +163,11 @@ def JSON_To_NewUser(json_str):
     data_usage = dict['data_usage']
     Agency_name = dict['Agency_name']
     Check_INF = dict['Check_INF']
-    return NewUser(phonenum, name, age, main_content, data_usage,Agency_name,Check_INF)
+    Check_cheap = dict['Check_cheap']
+    Call_usage = dict['Call_usage']
+    Message_usage = dict['Message_usage']
+    return NewUser(phonenum, name, age, main_content, data_usage, Call_usage, Message_usage,
+                   Agency_name,Check_INF, Check_cheap)
 
 
 #가족 엔티티

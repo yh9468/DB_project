@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser, Plan, Family, Agency, INF_details, NOR_details          #아마도 각 class마다 시리얼라이저를 처리해줘야 할것같다.
+from .models import MyUser, Plan, Family, Agency, INF_details, NOR_details, Use_detail           #아마도 각 class마다 시리얼라이저를 처리해줘야 할것같다.
 
 
 class InfdetailSerializer(serializers.ModelSerializer):
@@ -18,11 +18,19 @@ class NordetailSerializer(serializers.ModelSerializer):
 
 
 
+class UseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Use_detail
+        field=('phonenum', 'Jan', 'Feb', 'Mar', 'Apr', 'May','Jun','Jul','Aug','Sep', 'Oct','Nov', 'Dec', 'Use_max')
+        exclude = ()
+
+
 class MyUserSerializer(serializers.ModelSerializer):
+    use = UseSerializer(many=False, read_only=True)                              #한사람당 하나씩 이니까 one to one
     class Meta:
         model = MyUser
-        field=('phonenum', 'password', 'name', 'data_usage','message_usage',
-               'call_usage', 'User_contents', 'Family_ID', 'Plan_ID', 'age', 'use_max')
+        field=('phonenum', 'password', 'name','message_usage',
+               'call_usage', 'User_contents', 'Family_ID', 'Plan_ID', 'age', 'use')
         exclude = ('user_permissions','groups','is_superuser', 'last_login',)     #api 에서 제공되는 것을 제거하는것.
 
 class FamilySerializer(serializers.ModelSerializer):

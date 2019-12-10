@@ -10,8 +10,8 @@ from django.contrib import messages
 from django.core import serializers
 from rest_framework import viewsets
 from openpyxl import load_workbook
-from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser
-from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer
+from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser, Use_detail
+from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer, UseSerializer
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 import app.models
@@ -68,6 +68,12 @@ class InfdetailView(viewsets.ModelViewSet):
 class NordetailView(viewsets.ModelViewSet):
     queryset = NOR_details.objects.all()
     serializer_class = NordetailSerializer
+
+class UsedetailView(viewsets.ModelViewSet):
+    queryset = Use_detail.objects.all()
+    serializer_class = UseSerializer
+    def perform_create(self, serializer):
+        serializer.save()
 
 def make_data(request):
     return render(request,'app/make_data.html')
@@ -184,7 +190,7 @@ def make_user():
     for i in range(6101, 6102 + 1): plan_key.append(i)
 
     for i in range(0, 5000):
-        data_usage_6 = {}
+        data_usage = OrderedDict()
         rand_phonenum = ""
         use_max = 0
         for k in range(_LENGTH):
@@ -210,44 +216,44 @@ def make_user():
         if (plan_key[plan_selector] % 1000) // 100 == 0:
             for data_usage_1 in range(0, 12):
                 data_dif = random.randint(0, 50) / 100
-                data_usage_6[month[data_usage_1]] = round(abs(plan_data["Total_limit"] - data_dif),2)
-                use_max = max(use_max, data_usage_6[month[data_usage_1]])
+                data_usage[month[data_usage_1]] = round(abs(plan_data["Total_limit"] - data_dif),2)
+                use_max = max(use_max, data_usage[month[data_usage_1]])
         else:
-            for data_usage_1 in range(1, 6 + 1):
+            for data_usage_1 in range(0, 12):
                 data_dif = random.randint(-1, 20)
                 if plan_data["Month_limit"] == 999999:
-                    data_usage_6[month[data_usage_1]] = round(abs(30 + data_dif),2)
+                    data_usage[month[data_usage_1]] = round(abs(30 + data_dif),2)
                 else:
-                    data_usage_6[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
-                use_max = max(use_max, data_usage_6[month[data_usage_1]])
+                    data_usage[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
+                use_max = max(use_max, data_usage[month[data_usage_1]])
 
-
+        data_usage['Use_max'] = use_max
         user_data["phonenum"] = "010" + rand_phonenum
         user_data["name"] = last_name[name_selector1] + first_name[name_selector2] + first_name[name_selector3]
         if plan_data["age"] == 18:
             user_data["age"] = random.randint(10, 18)
         elif plan_data["age"] == 24:
-            user_data["age"] = random.randint(10, 24)
+            user_data["age"] = random.randint(19, 24)
         elif plan_data["age"] == 65:
             user_data["age"] = random.randint(65, 100)
         else:
             user_data["age"] = random.randint(10, 100)
 
-        data_usage_6 = str(data_usage_6)
         user_data["Plan_ID"] = plan_key[plan_selector]
-        user_data["use_max"] = use_max
-        user_data["data_usage"] = data_usage_6
         user_data["message_usage"] = abs(message_usage)
         user_data["call_usage"] = abs(call_usage)
         user_data["User_contents"] = user_contents[content_selector]
         user_data["password"] = "0000"
-        headers = {'Content-Type': 'application/json; charset=utf-8'}
-
-        Family_ID = random.randint(1,family_length+1)
+        Family_ID = random.randint(1, family_length + 1)
         user_data["Family_ID"] = Family_ID
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
 
         user_json = json.dumps(user_data, ensure_ascii=False, indent="\t").encode('utf-8')
         requests.post("http://127.0.0.1:8000/api/", headers=headers, data=user_json)
+
+        data_usage["phonenum"] = "010" + rand_phonenum
+        data_usage = json.dumps(data_usage, ensure_ascii=False, indent="\t").encode('utf-8')
+        requests.post("http://127.0.0.1:8000/useapi/",headers=headers, data=data_usage)
 
 #family 2500 개씩 만들기.
 def make_family():

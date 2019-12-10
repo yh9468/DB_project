@@ -16,6 +16,17 @@ user_detail = views.MyUserView.as_view({
     'patch' : 'partial_update',
     'delete' : 'destroy'
 })
+use_detail_list = views.UsedetailView.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+use_detail_detail = views.UsedetailView.as_view({
+    'get' : 'retrieve',
+    'put' : 'update',
+    'patch' : 'partial_update',
+    'delete' : 'destroy'
+})
 
 plan_list = views.PlanView.as_view({
     'get': 'list',
@@ -93,6 +104,8 @@ urlpatterns = [
     path('infapi/<int:pk>', INF_detail, name='inf_detail'),
     path('familyapi/',Family_list, name='family_list'),
     path('familyapi/<int:pk>', Family_detail, name='family_detail'),
+    path('useapi/', use_detail_list, name='use_list'),
+    path('useapi/<str:pk>', use_detail_detail, name='use_detail'),
 
     path('makedata/',views.make_data, name="make_data"),
     path('make_agency_plan/', views.make_plan_agency_btn, name='make_agency_plan'),

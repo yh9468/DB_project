@@ -27,7 +27,6 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser, PermissionsMixin):
     phonenum = models.CharField(primary_key=True, max_length=20)    #PK
     name = models.CharField(max_length=10)      #이름
-    use_max = models.FloatField("use_max", null=False)
     Plan_ID = models.ForeignKey(
         'Plan',
         on_delete=models.CASCADE,
@@ -41,7 +40,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         blank=False
     )
     age = models.PositiveIntegerField("age", null=False)
-    data_usage = models.TextField()    #데이터 사용량
     message_usage = models.PositiveIntegerField("message_usage", null=False, default=0)    #메시지 사용량
     call_usage = models.PositiveIntegerField("call_usage", null=False, default=0)       #전화 사용량
 
@@ -78,6 +76,30 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         # Simplest possible answer: All superusers are staff
         return self.is_superuser
 
+class Use_detail(models.Model):
+    phonenum = models.ForeignKey(
+        'MyUser',
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
+    Jan = models.FloatField("Jan", null=False)
+    Feb = models.FloatField("Feb", null=False)
+    Mar = models.FloatField("Mar", null=False)
+    Apr = models.FloatField("Apr", null=False)
+    May = models.FloatField("May", null=False)
+    Jun = models.FloatField("Jun", null=False)
+    Jul = models.FloatField("Jul", null=False)
+    Aug = models.FloatField("Aug", null=False)
+    Sep = models.FloatField("Sep", null=False)
+    Oct = models.FloatField("Oct", null=False)
+    Nov = models.FloatField("Nov", null=False)
+    Dec = models.FloatField("Dec", null=False)
+    Use_max = models.FloatField('Use_max', null=False)
+
+    class Meta:
+        db_table = 'Use_table'
+        verbose_name="사용량"
 
 def JSON_to_MyUser(json_str):
     # dict = json.loads(json_str)
@@ -86,14 +108,13 @@ def JSON_to_MyUser(json_str):
 
     myuser.phonenum = dict['phonenum']
     myuser.name = dict['name']
-    myuser.data_usage = dict['data_usage']
     myuser.message_usage = dict['message_usage']
     myuser.call_usage = dict['call_usage']
-    myuser.User_contents = dict['User_contents']
+    dict["User_contents"] = json.dumps(dict['User_contents'])
+    myuser.User_contents = dict["User_contents"]
     myuser.Plan_ID = Plan.objects.get(pk=dict['Plan_ID'])
     myuser.Family_ID = Family.objects.get(pk=dict['Family_ID'])
     myuser.age = dict['age']
-    myuser.use_max = dict['use_max']
     return myuser
 
 class NewUser:

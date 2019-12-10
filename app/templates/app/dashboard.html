@@ -355,7 +355,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Max Use Data </div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ user.use_max }} GB</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ use.Use_max }} GB</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -375,12 +375,10 @@
 
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="Total_data"></div>
                         <script>
-                                var usage_json = "{{ user.data_usage }}";
-                                usage_json = usage_json.replace(/&#39;/gi, '"');
-                                usage_json = JSON.parse(usage_json);
-                                var total = usage_json["Jan"] + usage_json["Feb"] + usage_json["Mar"] + usage_json["Apr"] +
-                                        usage_json["May"] + usage_json["Jun"] + usage_json["Jul"] + usage_json["Aug"] +
-                                        usage_json["Sep"] + usage_json["Oct"] + usage_json["Nov"] + usage_json["Dec"];
+
+                               var Jan = {{ use.Jan }}; var Feb = {{ use.Feb }}; var Mar = {{ use.Mar }}; var Apr = {{ use.Apr }}; var May = {{ use.May }}; var Jun = {{ use.Jun }}; var Jul = {{ use.Jul }};
+                                var Aug = {{ use.Aug }}; var Sep = {{ use.Sep }}; var Oct = {{ use.Oct }}; var Nov = {{ use.Nov }}; var Dec = {{ use.Dec }};
+                                var total = Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec;
                                 total = Math.round(total,5);
                                 var str = document.getElementById("Total_data");
                                 str.innerText = String(total) + " GB";
@@ -408,27 +406,19 @@
                         </div>
                         <div class="col">
                           <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" id="efficient_progress"></div>
+                            <div class="progress-bar-striped active bg-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="efficient_progress"></div>
                               <script>
-                                  var userplan = "{{ user.Plan_ID }}";
+                                  var plan_data = {{ plan_data }};
                                   var user_plan_id = "{{ user.Plan_ID.Plan_ID }}";
                                   var check_inf = parseInt((user_plan_id % 1000) / 100);
-                                  console.log(check_inf)
-                                  if (check_inf == 1)       //무제한인 경우
-                                  {
-                                      var inf_url_string="http://127.0.0.1:8000/infapi";
-                                      var inf_url = new URL(inf_url_string);
-                                      var inf_get = inf_url.searchParams.get(String(user_plan_id));
-                                      console.log(inf_get);
-                                  }
-                                  else                      //무제한 아닌 경우
-                                  {
-                                      var nor_url_string="http://127.0.0.1:8000/infapi";
-                                      var nor_url = new URL(nor_url_string);
-                                      var nor_get = nor_url.searchParams.get(String(user_plan_id));
-                                      console.log(nor_get);
+                                  var percent = 0;
+                                  console.log(total);
+                                  percent = Math.round((total / plan_data)*100);
+                                  var str = document.getElementById("efficient_num");
+                                  str.innerText = String(percent) + "%";
 
-                                  }
+                                  var progress = document.getElementById("efficient_progress");
+                                  progress.style.width = String(percent) +"%";
 
                             </script>
                           </div>
@@ -521,136 +511,17 @@
                   </div>
                   <div class="mt-4 text-center small">
                     <span class="mr-2">
-                      <i class="fas fa-circle text-primary"></i> Messenger
+                      <i class="fas fa-circle text-primary" id="main_contents"></i>
                     </span>
                     <span class="mr-2">
-                      <i class="fas fa-circle text-success"></i> SNS
+                      <i class="fas fa-circle text-success" id="second_contents"></i>
                     </span>
                     <span class="mr-2">
-                      <i class="fas fa-circle text-info"></i> Video
+                      <i class="fas fa-circle text-info" id="third_contents"></i>
                     </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Content Row -->
-          <div class="row">
-
-            <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
-
-              <!-- Project Card Example -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
-                </div>
-                <div class="card-body">
-                  <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
-                  <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Color System -->
-              <div class="row">
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-primary text-white shadow">
-                    <div class="card-body">
-                      Primary
-                      <div class="text-white-50 small">#4e73df</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-success text-white shadow">
-                    <div class="card-body">
-                      Success
-                      <div class="text-white-50 small">#1cc88a</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-info text-white shadow">
-                    <div class="card-body">
-                      Info
-                      <div class="text-white-50 small">#36b9cc</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      Warning
-                      <div class="text-white-50 small">#f6c23e</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-danger text-white shadow">
-                    <div class="card-body">
-                      Danger
-                      <div class="text-white-50 small">#e74a3b</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-secondary text-white shadow">
-                    <div class="card-body">
-                      Secondary
-                      <div class="text-white-50 small">#858796</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="col-lg-6 mb-4">
-
-              <!-- Illustrations -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                </div>
-                <div class="card-body">
-                  <div class="text-center">
-                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src='{% static "app/dashboard/img/undraw_posting_photo.svg" %}' alt="">
-                  </div>
-                  <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a constantly updated collection of beautiful svg images that you can use completely free and without attribution!</p>
-                  <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on unDraw &rarr;</a>
-                </div>
-              </div>
-
-              <!-- Approach -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
-                </div>
-                <div class="card-body">
-                  <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce CSS bloat and poor page performance. Custom CSS classes are used to create custom components and custom utility classes.</p>
-                  <p class="mb-0">Before working with this theme, you should become familiar with the Bootstrap framework, especially the utility classes.</p>
-                </div>
-              </div>
-
             </div>
           </div>
 
@@ -746,14 +617,8 @@
     }
 
     // Area Chart Example
-
-    var usage_json = "{{ user.data_usage }}";
-    var person_str = '{ "name" : "Min", "age" : 27}';
-    person_str = JSON.parse(person_str);
-    usage_json = usage_json.replace(/&#39;/gi, '"');
-    usage_json = JSON.parse(usage_json);
-    console.log(usage_json);
-
+    var Jan = {{ use.Jan }}; var Feb = {{ use.Feb }}; var Mar = {{ use.Mar }}; var Apr = {{ use.Apr }}; var May = {{ use.May }}; var Jun = {{ use.Jun }}; var Jul = {{ use.Jul }};
+    var Aug = {{ use.Aug }}; var Sep = {{ use.Sep }}; var Oct = {{ use.Oct }}; var Nov = {{ use.Nov }}; var Dec = {{ use.Dec }};
     var area_chart = document.getElementById("myAreaChart");
           var myLineChart = new Chart(area_chart, {
           type: 'line',
@@ -772,9 +637,9 @@
               pointHoverBorderColor: "rgba(78, 115, 223, 1)",
               pointHitRadius: 10,
               pointBorderWidth: 2,
-              data: [usage_json["Jan"] , usage_json["Feb"], usage_json["Mar"], usage_json["Apr"],
-                  usage_json["May"], usage_json["Jun"], usage_json["Jul"], usage_json["Aug"],
-                  usage_json["Sep"], usage_json["Oct"], usage_json["Nov"], usage_json["Dec"]],
+              data: [Jan, Feb, Mar, Apr,
+                  May, Jun, Jul, Aug,
+                  Sep, Oct, Nov, Dec],
             }],
           },
           options: {
@@ -844,15 +709,36 @@
             }
           }
         });
+let arr = ['통화', '영상시청', '커뮤니티', '게임', '웹서핑', '작업'];
+var main_contents = '{{ user.User_contents }}';
+const idx = arr.indexOf(main_contents);
+if (idx > -1) arr.splice(idx, 1);
+
+var second_idx = Math.floor(Math.random() * 5);
+var second_contents = arr[second_idx];
+if (second_idx > -1) arr.splice(second_idx, 1);
+
+var third_idx = Math.floor(Math.random() * 4);
+var third_contents = arr[third_idx];
+if (third_idx > -1) arr.splice(third_idx, 1);
+
+document.getElementById("main_contents").innerText = main_contents;
+document.getElementById("second_contents").innerText = second_contents;
+document.getElementById("third_contents").innerText = third_contents;
+
+var first_value = 37 + Math.floor(Math.random() * 20);
+var second_value = 23 + Math.floor(Math.random() * 20);
+var third_value = 100 - first_value - second_value;
+
 
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
-    labels: ["Direct", "Referral", "Social"],
+    labels: [main_contents, second_contents, third_contents],
     datasets: [{
-      data: [55, 30, 15],
+      data: [first_value, second_value, third_value],
       backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
       hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
       hoverBorderColor: "rgba(234, 236, 244, 1)",

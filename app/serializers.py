@@ -16,8 +16,6 @@ class NordetailSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
-
-
 class UseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Use_detail

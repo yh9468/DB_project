@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.core import serializers
 from rest_framework import viewsets
 from openpyxl import load_workbook
-from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser, Use_detail
+from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser, Use_detail, JSON_to_use
 from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer, UseSerializer
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -117,11 +117,28 @@ def dashboard(request):
 
     # 로그인 하는 경우
     else:
-        response = requests.get(f'http://127.0.0.1:8000/api/{user_id}/')
-        user = response.json()
+        user_response = requests.get(f'http://127.0.0.1:8000/api/{user_id}/')
+        user = user_response.json()
         user = JSON_to_MyUser(user)
-        print(f"User : {user}")
-        context = {'user': user}
+
+        use_response = requests.get(f'http://127.0.0.1:8000/useapi/{user.phonenum}')
+        use = use_response.json()
+        use = JSON_to_use(use)
+
+        if((user.Plan_ID_id % 1000) // 100 == 0):       #nor
+            plan_response = requests.get(f'http://127.0.0.1:8000/norapi/{user.Plan_ID_id}')
+            plan_response = plan_response.json()
+            plan_data = plan_response['Total_limit'] * 12
+        else:
+            plan_response = requests.get(f'http://127.0.0.1:8000/infapi/{user.Plan_ID_id}')
+            plan_response = plan_response.json()
+            monthlimit = plan_response['Month_limit']
+            if plan_response['Month_limit'] == 999999:
+                monthlimit = 300
+            plan_data = monthlimit * 12 + plan_response['Day_limit'] * 365
+
+        context = {'user': user, 'use': use, 'plan_data': plan_data}
+
         return render(request, 'app/dashboard.html', context)
 
 
@@ -231,7 +248,7 @@ def make_user():
             for data_usage_1 in range(0, 12):
                 data_dif = random.randint(-1, 20)
                 if plan_data["Month_limit"] == 999999:
-                    data_usage[month[data_usage_1]] = round(abs(30 + data_dif),2)
+                    data_usage[month[data_usage_1]] = round(abs(300 + random.randint(-200, 0)),2)
                 else:
                     data_usage[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
                 use_max = max(use_max, data_usage[month[data_usage_1]])

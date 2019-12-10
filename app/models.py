@@ -83,6 +83,7 @@ class Use_detail(models.Model):
         null=False,
         blank=False
     )
+
     Jan = models.FloatField("Jan", null=False)
     Feb = models.FloatField("Feb", null=False)
     Mar = models.FloatField("Mar", null=False)
@@ -110,12 +111,31 @@ def JSON_to_MyUser(json_str):
     myuser.name = dict['name']
     myuser.message_usage = dict['message_usage']
     myuser.call_usage = dict['call_usage']
-    dict["User_contents"] = json.dumps(dict['User_contents'])
     myuser.User_contents = dict["User_contents"]
     myuser.Plan_ID = Plan.objects.get(pk=dict['Plan_ID'])
     myuser.Family_ID = Family.objects.get(pk=dict['Family_ID'])
     myuser.age = dict['age']
     return myuser
+
+def JSON_to_use(json_str):
+    dict = json_str[0]
+    myuse = Use_detail()
+    myuse.id = dict['id']
+    myuse.phonenum = MyUser.objects.get(pk=dict['phonenum'])
+    myuse.Jan = dict['Jan']
+    myuse.Feb = dict['Feb']
+    myuse.Mar = dict['Mar']
+    myuse.Apr = dict['Apr']
+    myuse.May = dict['May']
+    myuse.Jun = dict['Jun']
+    myuse.Jul = dict['Jul']
+    myuse.Aug = dict['Aug']
+    myuse.Sep = dict['Sep']
+    myuse.Oct = dict['Oct']
+    myuse.Nov = dict['Nov']
+    myuse.Dec = dict['Dec']
+    myuse.Use_max = dict['Use_max']
+    return myuse
 
 class NewUser:
     def __init__(self,phonenum, name, age, main_content, data_usage, Agency_name, Check_INF):
@@ -143,16 +163,6 @@ def JSON_To_NewUser(json_str):
     return NewUser(phonenum, name, age, main_content, data_usage,Agency_name,Check_INF)
 
 
-"""
-    def serialize(self):
-        return { 'phonenum' : self.phonenum,
-                 'name' : self.name,
-                 'age' : self.age,
-                 'main_content' : self.main_content,
-                 'data_usage' : self.data_usage,
-                 'Agency_name' : self.Agency_name,
-                 'Check_INF' : self.Check_INF}
-"""
 #가족 엔티티
 class Family(models.Model):
     Family_id = models.IntegerField("Family_id", primary_key=True, null=False)

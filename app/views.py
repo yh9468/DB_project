@@ -1,21 +1,24 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+import urllib
+from django.http import HttpResponse, HttpResponseRedirect
 import string
 from django.contrib.auth import login, authenticate
 import django.contrib.auth as auth
 import requests
+from rest_framework import generics
 import json
 from collections import OrderedDict, Counter
 from django.contrib import messages
 from django.core import serializers
 from rest_framework import viewsets
 from openpyxl import load_workbook
-from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser
-from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer
+from .models import NewUser, MyUser, Agency, Plan, Family, INF_details, NOR_details, JSON_To_NewUser, JSON_to_MyUser, Use_detail, JSON_to_use
+from .serializers import MyUserSerializer, AgencySerializer, PlanSerializer, FamilySerializer, InfdetailSerializer, NordetailSerializer, UseSerializer
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 import app.models
 import app.models as table
+from rest_framework.response import Response
 import random
 import json
 import os
@@ -69,6 +72,19 @@ class NordetailView(viewsets.ModelViewSet):
     queryset = NOR_details.objects.all()
     serializer_class = NordetailSerializer
 
+class UsedetailView(viewsets.ModelViewSet):
+    queryset = Use_detail.objects.all()
+    serializer_class = UseSerializer
+    def perform_create(self, serializer):
+        serializer.save()
+
+class Use_detail_List(generics.ListAPIView):
+    serializer_class = UseSerializer
+    def get_queryset(self):
+        phonenum = self.kwargs['phonenum']
+        return Use_detail.objects.filter(phonenum__phonenum=phonenum)
+
+
 def make_data(request):
     return render(request,'app/make_data.html')
 
@@ -83,9 +99,22 @@ def newuserform(request):
         data_usage = request.POST['data_usage']
         Agency_name = request.POST['Agency_name']
         Check_INF = request.POST['Check_INF']
+        Check_cheap = request.POST['Check_cheap']
+        message_usage = request.POST['Message_usage']
+        call_usage = request.POST['Call_usage']
         request.session['user_id'] = "0000"
-        newuser = NewUser('0000',name, age, main_content, data_usage, Agency_name, Check_INF)
-        request.session['newuser'] = newuser.toJSON()                       #json 변환.
+        newuser = NewUser('0000',name, age, main_content, data_usage, call_usage, message_usage,
+                          Agency_name, Check_INF, Check_cheap)
+        request.session['newuser'] = newuser.toJSON()      #json 변환.
+
+        if(Check_cheap == 'on'):
+            request.session['is_cheap'] = True
+        else:
+            request.session['is_cheap'] = False
+        if(Check_INF == 'on'):
+            request.session['is_change'] = True
+        else:
+            request.session['is_change'] = True
         return redirect('dashboard')
     # get
     else:
@@ -93,20 +122,41 @@ def newuserform(request):
 
 def dashboard(request):
     user_id = request.session['user_id']
+    is_cheap = request.session['is_cheap']
+    is_change = request.session['is_change']
     # 새로운 유저인 경우.
     if user_id == "0000":
         newuser = request.session['newuser']
         newuser = JSON_To_NewUser(newuser)
         context = {'user':newuser}
-        return render(request, 'app/dashboard.html', context)
+        return render(request, 'app/user_result.html', context)
 
     # 로그인 하는 경우
     else:
-        response = requests.get(f'http://127.0.0.1:8000/api/{user_id}/')
-        user = response.json()
+        recommend = pop_best_plan(user_id, is_change, is_cheap)
+        recommend2 = most_plan(request)
+        user_response = requests.get(f'http://127.0.0.1:8000/api/{user_id}/')
+        user = user_response.json()
         user = JSON_to_MyUser(user)
-        print(f"User : {user}")
-        context = {'user': user}
+
+        use_response = requests.get(f'http://127.0.0.1:8000/useapi/{user.phonenum}')
+        use = use_response.json()
+        use = JSON_to_use(use)
+
+        if((user.Plan_ID_id % 1000) // 100 == 0):       #nor
+            plan_response = requests.get(f'http://127.0.0.1:8000/norapi/{user.Plan_ID_id}')
+            plan_response = plan_response.json()
+            plan_data = plan_response['Total_limit'] * 12
+        else:
+            plan_response = requests.get(f'http://127.0.0.1:8000/infapi/{user.Plan_ID_id}')
+            plan_response = plan_response.json()
+            monthlimit = plan_response['Month_limit']
+            if plan_response['Month_limit'] == 999999:
+                monthlimit = 300
+            plan_data = monthlimit * 12 + plan_response['Day_limit'] * 365
+
+        context = {'user': user, 'use': use, 'plan_data': plan_data, 'recommend': recommend}
+
         return render(request, 'app/dashboard.html', context)
 
 def most_plan(request):
@@ -213,7 +263,7 @@ def make_user():
     for i in range(6101, 6102 + 1): plan_key.append(i)
 
     for i in range(0, 5000):
-        data_usage_6 = {}
+        data_usage = OrderedDict()
         rand_phonenum = ""
         use_max = 0
         for k in range(_LENGTH):
@@ -239,18 +289,18 @@ def make_user():
         if (plan_key[plan_selector] % 1000) // 100 == 0:
             for data_usage_1 in range(0, 12):
                 data_dif = random.randint(0, 50) / 100
-                data_usage_6[month[data_usage_1]] = round(abs(plan_data["Total_limit"] - data_dif),2)
-                use_max = max(use_max, data_usage_6[month[data_usage_1]])
+                data_usage[month[data_usage_1]] = round(abs(plan_data["Total_limit"] - data_dif),2)
+                use_max = max(use_max, data_usage[month[data_usage_1]])
         else:
-            for data_usage_1 in range(1, 6 + 1):
+            for data_usage_1 in range(0, 12):
                 data_dif = random.randint(-1, 20)
                 if plan_data["Month_limit"] == 999999:
-                    data_usage_6[month[data_usage_1]] = round(abs(30 + data_dif),2)
+                    data_usage[month[data_usage_1]] = round(abs(300 + random.randint(-200, 0)),2)
                 else:
-                    data_usage_6[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
-                use_max = max(use_max, data_usage_6[month[data_usage_1]])
+                    data_usage[month[data_usage_1]] = round(abs(plan_data["Month_limit"] + data_dif),2)
+                use_max = max(use_max, data_usage[month[data_usage_1]])
 
-
+        data_usage['Use_max'] = use_max
         user_data["phonenum"] = "010" + rand_phonenum
         user_data["name"] = last_name[name_selector1] + first_name[name_selector2] + first_name[name_selector3]
         if plan_data["age"] == 18:
@@ -262,21 +312,21 @@ def make_user():
         else:
             user_data["age"] = random.randint(10, 100)
 
-        data_usage_6 = str(data_usage_6)
         user_data["Plan_ID"] = plan_key[plan_selector]
-        user_data["use_max"] = use_max
-        user_data["data_usage"] = data_usage_6
         user_data["message_usage"] = abs(message_usage)
         user_data["call_usage"] = abs(call_usage)
         user_data["User_contents"] = user_contents[content_selector]
         user_data["password"] = "0000"
-        headers = {'Content-Type': 'application/json; charset=utf-8'}
-
-        Family_ID = random.randint(1,family_length+1)
+        Family_ID = random.randint(1, family_length + 1)
         user_data["Family_ID"] = Family_ID
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
 
         user_json = json.dumps(user_data, ensure_ascii=False, indent="\t").encode('utf-8')
         requests.post("http://127.0.0.1:8000/api/", headers=headers, data=user_json)
+
+        data_usage["phonenum"] = "010" + rand_phonenum
+        data_usage = json.dumps(data_usage, ensure_ascii=False, indent="\t").encode('utf-8')
+        requests.post("http://127.0.0.1:8000/useapi/",headers=headers, data=data_usage)
 
 #family 2500 개씩 만들기.
 def make_family():
@@ -394,12 +444,23 @@ def signin(request):
     elif request.method =="POST":
         phonenum = request.POST['phonenum']       #PK
         password = request.POST['password']
+        if request.POST['is_change'] == 'on':
+            is_change =1
+        else:
+            is_change = 0
+
+        if request.POST['is_cheap'] == 'on':
+            is_cheap =1
+        else:
+            is_cheap = 0
         user = authenticate(request ,username=phonenum, password=password)
 
         if user is not None:
             login(request, user)
             request.session['user_id'] = user.phonenum
             request.session['password'] = user.password
+            request.session['is_cheap'] = is_cheap
+            request.session['is_change'] = is_change
 
             if request.POST.get("keep_login") == "TRUE":
                 response = redirect(request , 'dashboard')
@@ -418,3 +479,220 @@ def logout(request):
     del request.session['user_id']
     return redirect('signin')
 # Create your views here.
+
+
+def pop_best_plan(phonenum, change_agency, use_c_agency):
+    user_info = requests.get("http://127.0.0.1:8000/api/" + str(phonenum)) # 사용자 데이터
+    user_info = user_info.json()
+
+    norplan = requests.get("http://127.0.0.1:8000/norapi/") # 기본 요금제
+    norplan = norplan.json()
+    infplan = requests.get("http://127.0.0.1:8000/infapi/") # 무제한 요금제
+    infplan = infplan.json()
+
+    user_useage = requests.get("http://127.0.0.1:8000/useapi/" + str(phonenum))
+    user_useage = user_useage.json()
+    user_useage = user_useage[0]
+
+    user_data = user_useage["Use_max"]# 사용자의 최대 데이터 사용량
+    user_call = user_info["call_usage"] # 사용자의 전화 사용량
+    user_message = user_info["message_usage"] # 사용자의 문자 사용량
+    user_age = user_info["age"] # 사용자 나이
+
+    # 사용자의 통신사
+    user_plan_ID = user_info["Plan_ID"]
+    if (user_plan_ID % 1000) // 100 == 0:
+        user_plan = requests.get("http://127.0.0.1:8000/norapi/"+str(user_plan_ID))
+        user_plan = user_plan.json()
+        user_agency = user_plan["Agency_name"]
+    else:
+        user_plan = requests.get("http://127.0.0.1:8000/infapi/"+str(user_plan_ID))
+        user_plan = user_plan.json()
+        user_agency = user_plan["Agency_name"]
+
+    best_plan = [] # 추천 가능한 모든 요금제
+
+    # 통신사 변경 의사 = O
+    if change_agency:
+        # 사용자 가족의 통신사
+        user_family = user_info["Family_ID"]
+        user_family_info = requests.get("http://127.0.0.1:8000/familyapi/" + str(user_family))
+        user_family_info = user_family_info.json()
+        family_agency = user_family_info["agency_name"]
+
+        # 사용자의 통신사와 가족의 통신사가 같은 경우 전체에서 추천
+        if user_agency == family_agency:
+            for plan_info in norplan:
+                # 알뜰폰 요금제 사용하지 않을경우
+                if not use_c_agency:
+                    if plan_info["Plan_ID"] > 4000:
+                        continue
+                if plan_info["age"] == 65:
+                    if user_age < 65:
+                        continue
+                elif plan_info["age"] == 18:
+                    if user_age > 18:
+                        continue
+                elif plan_info["age"] == 24:
+                    if (user_age < 19) and (user_age > 24):
+                        continue
+                else:
+                    if user_data < plan_info["Total_limit"]:
+                        if user_call < plan_info["Call_Limit"]:
+                            if user_message < plan_info["Message_Limit"]:
+                                best_plan.append(plan_info)
+
+            for plan_info in infplan:
+                # 알뜰폰 요금제 사용하지 않을경우
+                if not use_c_agency:
+                    if plan_info["Plan_ID"] > 4000:
+                        continue
+                if plan_info["age"] == 65:
+                    if user_age < 65:
+                        continue
+                elif plan_info["age"] == 18:
+                    if user_age > 18:
+                        continue
+                elif plan_info["age"] == 24:
+                    if (user_age < 19) and (user_age > 24):
+                        continue
+                else:
+                    if user_data < plan_info["Total_limit"]:
+                        if user_call < plan_info["Call_Limit"]:
+                            if user_message < plan_info["Message_Limit"]:
+                                best_plan.append(plan_info)
+
+        # 사용자의 통신사와 가족의 통신사가 다른 경우 가족의 통신사로 추천
+        else:
+            for plan_info in norplan:
+                # 알뜰폰 요금제 사용하지 않을경우
+                if not use_c_agency:
+                    if plan_info["Plan_ID"] > 4000:
+                        continue
+                if not (plan_info["Agency_name"] == family_agency):
+                    continue
+                if plan_info["age"] == 65:
+                    if user_age < 65:
+                        continue
+                elif plan_info["age"] == 18:
+                    if user_age > 18:
+                        continue
+                elif plan_info["age"] == 24:
+                    if (user_age < 19) and (user_age > 24):
+                        continue
+                else:
+                    if user_data < plan_info["Total_limit"]:
+                        if user_call < plan_info["Call_Limit"]:
+                            if user_message < plan_info["Message_Limit"]:
+                                best_plan.append(plan_info)
+
+            for plan_info in infplan:
+                # 알뜰폰 요금제 사용하지 않을경우
+                if not use_c_agency:
+                    if plan_info["Plan_ID"] > 4000:
+                        continue
+                if plan_info["age"] == 65:
+                    if user_age < 65:
+                        continue
+                elif plan_info["age"] == 18:
+                    if user_age > 18:
+                        continue
+                elif plan_info["age"] == 24:
+                    if (user_age < 19) and (user_age > 24):
+                        continue
+                else:
+                    if user_data < plan_info["Month_limit"]:
+                        if user_call < plan_info["Call_Limit"]:
+                            if user_message < plan_info["Message_Limit"]:
+                                best_plan.append(plan_info)
+
+    # 통신사 변경 의사 = X
+    # 사용자의 통신사에서 추천
+    else:
+        for plan_info in norplan:
+            # 알뜰폰 요금제 사용하지 않을경우
+            if not use_c_agency:
+                if plan_info["Plan_ID"] > 4000:
+                    continue
+            if not (plan_info["Agency_name"] == user_agency):
+                continue
+            if plan_info["age"] == 65:
+                if user_age < 65:
+                    continue
+            elif plan_info["age"] == 18:
+                if user_age > 18:
+                    continue
+            elif plan_info["age"] == 24:
+                if (user_age < 19) and (user_age > 24):
+                    continue
+            else:
+                if user_data < plan_info["Total_limit"]:
+                    if user_call < plan_info["Call_Limit"]:
+                        if user_message < plan_info["Message_Limit"]:
+                            best_plan.append(plan_info)
+
+        for plan_info in infplan:
+            # 알뜰폰 요금제 사용하지 않을경우
+            if not use_c_agency:
+                if plan_info["Plan_ID"] > 4000:
+                    continue
+            if plan_info["age"] == 65:
+                if user_age < 65:
+                    continue
+            elif plan_info["age"] == 18:
+                if user_age > 18:
+                    continue
+            elif plan_info["age"] == 24:
+                if (user_age < 19) and (user_age > 24):
+                    continue
+            else:
+                if user_data < plan_info["Total_limit"]:
+                    if user_call < plan_info["Call_Limit"]:
+                        if user_message < plan_info["Message_Limit"]:
+                            best_plan.append(plan_info)
+
+    # 추천 가능한 모든 요금제 중에서 가장 저렴한 요금제 찾기
+    min_cost = best_plan[1]["Plan_cost"]
+    best_plan_name = ""
+    for plan_info in best_plan:
+        if plan_info["Plan_cost"] < min_cost:
+            min_cost = plan_info["Plan_cost"]
+            best_plan_name = plan_info["Plan_name"]
+
+    return best_plan_name
+
+def most_plan(request):
+    # 현재 접속중인 세션 기준으로 phonenum을 받아온다
+    phonenum = request.session['user_id']
+    # json 형식의 user_plan을 가져옴
+    user_plan = requests.get("http://127.0.0.1:8000/api/" + phonenum)
+    user_plan = user_plan.json()
+
+    use_data = requests.get("http://127.0.0.1:8000/useapi/" + phonenum)
+    use_data = use_data.json()
+    use_data = use_data[0]
+
+    # 유저의 데이터 사용량 기반 타겟 범위 설정
+    user_data_useage = use_data['Use_max']
+    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
+    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
+    # 범위에 맞는 플랜을 모두 찾아온다
+    users_plan = list(Use_detail.objects.filter(use_max__gte=target_min, use_max__lte=target_max).values('Plan_ID'))
+
+    # Plan ID를 추출한다
+    plan_id = []
+    for plan_info in users_plan:
+        plan_id.append(plan_info['Plan_ID'])
+
+    # Counter 통해 가장 많이 등장한 Plan_ID순으로 cnt 저장
+    cnt = Counter(plan_id).most_common(2)
+
+    # 가장 많이 등장한 plan id 2개에 대한 쿼리셋을 얻은 뒤 이를 합친다
+    q1 = Plan.objects.filter(Plan_ID=cnt[0][0])
+    if len(cnt) == 2:
+        q2 = Plan.objects.filter(Plan_ID=cnt[1][0])
+    most2 = q1|q2
+    print(most2)
+
+    # 반환
+    return most2

@@ -138,9 +138,10 @@ input[type=submit]:hover {
 
 <h2>정보를 입력해 주세요!</h2>
 <p>핸드폰을 사용하신다면 번호 및 패스워드를 입력해 주시고, 핸드폰을 사용하시지 않는다면 개인 정보를 입력해 주세요.</p>
-
 <div class="container">
     <form method="post" action=""> {% csrf_token %}
+
+
     <div class="row">
         <div class="col"> <h2 style="text-align:center">로그인</h2></div>
         <div class="col"> <h2 style="text-align:center">회원 등록 없이 이용!</h2></div>
@@ -157,6 +158,8 @@ input[type=submit]:hover {
 
         <input type="text" name='phonenum' placeholder="번호를 입력해 주세요" required>
         <input type="password" name='password' placeholder="비밀번호를 입력해 주세요" required>
+            <label><input type="checkbox" name="is_change" > 통신사 변경 하시겠습니까</label>
+      <label><input type="checkbox" name="is_cheap" > 알뜰폰 사용 하시겠습니까</label>
           <input type="submit" value="Login">
       </div>
 
@@ -168,6 +171,7 @@ input[type=submit]:hover {
       </div>
 
     </div>
+
     </form>
 </div>
 

@@ -27,7 +27,6 @@ class MyUserManager(BaseUserManager):
 class MyUser(AbstractBaseUser, PermissionsMixin):
     phonenum = models.CharField(primary_key=True, max_length=20)    #PK
     name = models.CharField(max_length=10)      #이름
-    use_max = models.FloatField("use_max", null=False)
     Plan_ID = models.ForeignKey(
         'Plan',
         on_delete=models.CASCADE,
@@ -41,7 +40,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         blank=False
     )
     age = models.PositiveIntegerField("age", null=False)
-    data_usage = models.TextField()    #데이터 사용량
     message_usage = models.PositiveIntegerField("message_usage", null=False, default=0)    #메시지 사용량
     call_usage = models.PositiveIntegerField("call_usage", null=False, default=0)     #전화 사용량
 
@@ -82,6 +80,31 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         # Simplest possible answer: All superusers are staff
         return self.is_superuser
 
+class Use_detail(models.Model):
+    phonenum = models.ForeignKey(
+        'MyUser',
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
+
+    Jan = models.FloatField("Jan", null=False)
+    Feb = models.FloatField("Feb", null=False)
+    Mar = models.FloatField("Mar", null=False)
+    Apr = models.FloatField("Apr", null=False)
+    May = models.FloatField("May", null=False)
+    Jun = models.FloatField("Jun", null=False)
+    Jul = models.FloatField("Jul", null=False)
+    Aug = models.FloatField("Aug", null=False)
+    Sep = models.FloatField("Sep", null=False)
+    Oct = models.FloatField("Oct", null=False)
+    Nov = models.FloatField("Nov", null=False)
+    Dec = models.FloatField("Dec", null=False)
+    Use_max = models.FloatField('Use_max', null=False)
+
+    class Meta:
+        db_table = 'Use_table'
+        verbose_name="사용량"
 
 def JSON_to_MyUser(json_str):
     # dict = json.loads(json_str)
@@ -90,18 +113,36 @@ def JSON_to_MyUser(json_str):
 
     myuser.phonenum = dict['phonenum']
     myuser.name = dict['name']
-    myuser.data_usage = dict['data_usage']
     myuser.message_usage = dict['message_usage']
     myuser.call_usage = dict['call_usage']
-    myuser.User_contents = dict['User_contents']
+    myuser.User_contents = dict["User_contents"]
     myuser.Plan_ID = Plan.objects.get(pk=dict['Plan_ID'])
     myuser.Family_ID = Family.objects.get(pk=dict['Family_ID'])
     myuser.age = dict['age']
-    myuser.use_max = dict['use_max']
     return myuser
 
+def JSON_to_use(json_str):
+    dict = json_str[0]
+    myuse = Use_detail()
+    myuse.id = dict['id']
+    myuse.phonenum = MyUser.objects.get(pk=dict['phonenum'])
+    myuse.Jan = dict['Jan']
+    myuse.Feb = dict['Feb']
+    myuse.Mar = dict['Mar']
+    myuse.Apr = dict['Apr']
+    myuse.May = dict['May']
+    myuse.Jun = dict['Jun']
+    myuse.Jul = dict['Jul']
+    myuse.Aug = dict['Aug']
+    myuse.Sep = dict['Sep']
+    myuse.Oct = dict['Oct']
+    myuse.Nov = dict['Nov']
+    myuse.Dec = dict['Dec']
+    myuse.Use_max = dict['Use_max']
+    return myuse
+
 class NewUser:
-    def __init__(self,phonenum, name, age, main_content, data_usage, Agency_name, Check_INF):
+    def __init__(self,phonenum, name, age, main_content, data_usage, call_usage, message_usage, Agency_name, Check_INF, Check_cheap):
         self.phonenum = phonenum
         self.name = name
         self.age = age
@@ -109,6 +150,9 @@ class NewUser:
         self.data_usage = data_usage
         self.Agency_name = Agency_name
         self.Check_INF = Check_INF
+        self.Check_cheap = Check_cheap
+        self.Call_usage = call_usage
+        self.Message_usage = message_usage
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
@@ -123,19 +167,13 @@ def JSON_To_NewUser(json_str):
     data_usage = dict['data_usage']
     Agency_name = dict['Agency_name']
     Check_INF = dict['Check_INF']
-    return NewUser(phonenum, name, age, main_content, data_usage,Agency_name,Check_INF)
+    Check_cheap = dict['Check_cheap']
+    Call_usage = dict['Call_usage']
+    Message_usage = dict['Message_usage']
+    return NewUser(phonenum, name, age, main_content, data_usage, Call_usage, Message_usage,
+                   Agency_name,Check_INF, Check_cheap)
 
 
-"""
-    def serialize(self):
-        return { 'phonenum' : self.phonenum,
-                 'name' : self.name,
-                 'age' : self.age,
-                 'main_content' : self.main_content,
-                 'data_usage' : self.data_usage,
-                 'Agency_name' : self.Agency_name,
-                 'Check_INF' : self.Check_INF}
-"""
 #가족 엔티티
 class Family(models.Model):
     Family_id = models.IntegerField("Family_id", primary_key=True, null=False)

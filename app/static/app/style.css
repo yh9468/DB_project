@@ -3,6 +3,17 @@ body {
   margin:0;
 }
 
+.checks input[type="checkbox"] + label {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px; /* 글자와 체크박스 사이의 간격을 변경 */
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+
 .nav-container{
   display: flex;
   flex-direction: row;

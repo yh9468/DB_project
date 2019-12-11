@@ -105,19 +105,19 @@ def newuserform(request):
         newuser = NewUser('0000',name, age, main_content, data_usage, call_usage, message_usage,
                           Agency_name, Check_INF, Check_cheap)
         request.session['newuser'] = newuser.toJSON()      #json 변환.
-
         if(Check_cheap == 'on'):
             request.session['is_cheap'] = True
         else:
             request.session['is_cheap'] = False
         if(Check_INF == 'on'):
-            request.session['is_change'] = True
+            request.session['is_inf'] = True
         else:
-            request.session['is_change'] = True
+            request.session['is_inf'] = True
         return redirect('dashboard')
     # get
     else:
         return render(request,'app/newuser_form.html')
+
 
 def dashboard(request):
     user_id = request.session['user_id']
@@ -457,11 +457,11 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
     infplan = requests.get("http://127.0.0.1:8000/infapi/") # 무제한 요금제
     infplan = infplan.json()
 
-    user_useage = requests.get("http://127.0.0.1:8000/useapi/" + str(phonenum))
-    user_useage = user_useage.json()
-    user_useage = user_useage[0]
+    user_usage = requests.get("http://127.0.0.1:8000/useapi/" + str(phonenum))
+    user_usage = user_usage.json()
+    user_usage = user_usage[0]
 
-    user_data = user_useage["Use_max"]# 사용자의 최대 데이터 사용량
+    user_data = user_usage["Use_max"]# 사용자의 최대 데이터 사용량
     user_call = user_info["call_usage"] # 사용자의 전화 사용량
     user_message = user_info["message_usage"] # 사용자의 문자 사용량
     user_age = user_info["age"] # 사용자 나이
@@ -628,6 +628,54 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
 
     return best_plan_name
 
+def newuser_mostplan(request):
+    is_cheap = request.session['is_cheap']
+    is_inf = request.session['is_inf']
+    use_data = request.session['newuser']['data_usage']
+
+    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(use_data)
+    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(use_data)
+    users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
+    plan_id = []
+    for item in users_search:
+        plan_id.append(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID.Plan_ID)
+
+    cnt = list(Counter(plan_id))
+
+    # 무한, 알뜰폰 여부 체크
+    result_id = []
+    if (is_cheap is True) and (is_inf is True):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 41 or item//100 == 51 or item//100 == 61:
+                result_id.append(item)
+    elif (is_cheap is True) and (is_inf is False):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 40 or item//100 == 50 or item//100 == 60:
+                result_id.append(item)
+    elif (is_cheap is False) and (is_inf is True):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 11 or item//100 == 21 or item//100 == 31:
+                result_id.append(item)
+    elif (is_cheap is False) and (is_inf is False):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 10 or item//100 == 20 or item//100 == 30:
+                result_id.append(item)
+
+    result_plan = []
+    for plan_id in result_id:
+        result_plan.append(Plan.objects.get(Plan_ID=plan_id).__str__())
+
+    return result_plan
+
+
 def most_plan(request):
     # 현재 접속중인 세션 기준으로 phonenum을 받아온다
     phonenum = request.session['user_id']
@@ -639,9 +687,9 @@ def most_plan(request):
     use_data = use_data.json()
 
     # 유저의 데이터 사용량 기반 타겟 범위 설정
-    user_data_useage = use_data[0]['Use_max']
-    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
-    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
+    user_data_usage = use_data[0]['Use_max']
+    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_usage)
+    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_usage)
     # 범위에 맞는 플랜을 모두 찾아온다
     # 타겟 값을 통해 폰번호를 추출 -> 폰번호로 다시 오브젝트 필터를 씌워서 plan 추출 -> 플랜 번호로 ->
     users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))

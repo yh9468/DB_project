@@ -112,7 +112,7 @@ def newuserform(request):
         if(Check_INF == 'on'):
             request.session['is_inf'] = True
         else:
-            request.session['is_inf'] = True
+            request.session['is_inf'] = False
         return redirect('dashboard')
     # get
     else:
@@ -122,17 +122,18 @@ def newuserform(request):
 def dashboard(request):
     user_id = request.session['user_id']
     is_cheap = request.session['is_cheap']
-    is_change = request.session['is_change']
+    is_inf = request.session['is_inf']
     # 새로운 유저인 경우.
     if user_id == "0000":
         newuser = request.session['newuser']
         newuser = JSON_To_NewUser(newuser)
-        context = {'user':newuser}
+        result = newuser_mostplan(is_cheap, is_inf, int(newuser.data_usage)/1024)
+        context = {'user':newuser, 'mostplans':result}
         return render(request, 'app/user_result.html', context)
 
     # 로그인 하는 경우
     else:
-        recommend = pop_best_plan(user_id, is_change, is_cheap)
+        recommend = pop_best_plan(user_id, is_inf, is_cheap)
         recommend2 = most_plan(request)
         user_response = requests.get(f'http://127.0.0.1:8000/api/{user_id}/')
         user = user_response.json()
@@ -628,11 +629,7 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
 
     return best_plan_name
 
-def newuser_mostplan(request):
-    is_cheap = request.session['is_cheap']
-    is_inf = request.session['is_inf']
-    use_data = request.session['newuser']['data_usage']
-
+def newuser_mostplan(is_cheap, is_inf, use_data):
     target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(use_data)
     target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(use_data)
     users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
@@ -641,7 +638,6 @@ def newuser_mostplan(request):
         plan_id.append(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID.Plan_ID)
 
     cnt = list(Counter(plan_id))
-
     # 무한, 알뜰폰 여부 체크
     result_id = []
     if (is_cheap is True) and (is_inf is True):
@@ -672,7 +668,6 @@ def newuser_mostplan(request):
     result_plan = []
     for plan_id in result_id:
         result_plan.append(Plan.objects.get(Plan_ID=plan_id).__str__())
-
     return result_plan
 
 

@@ -132,7 +132,9 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">최빈도를 통한 추천</div>
-
+                        {% for plan in mostplans %}
+                            {{ plan }} <br>
+                        {% endfor %}
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="Total_data"></div>
                     </div>
                   </div>

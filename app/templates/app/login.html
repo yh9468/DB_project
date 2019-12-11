@@ -158,8 +158,15 @@ input[type=submit]:hover {
 
         <input type="text" name='phonenum' placeholder="번호를 입력해 주세요" required>
         <input type="password" name='password' placeholder="비밀번호를 입력해 주세요" required>
-            <label><input type="checkbox" name="is_change" > 통신사 변경 하시겠습니까</label>
-      <label><input type="checkbox" name="is_cheap" > 알뜰폰 사용 하시겠습니까</label>
+            <label>
+                <input type="hidden" name="is_change" value="0">
+                <input type="checkbox" name="is_change" value="on"> 통신사 변경 하시겠습니까
+            </label>
+      <label>
+          <input type="hidden" name="is_cheap" value="0">
+          <input type="checkbox" name="is_cheap" value="on"> 알뜰폰 사용 하시겠습니까
+      </label>
+
           <input type="submit" value="Login">
       </div>
 

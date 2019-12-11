@@ -141,14 +141,14 @@ class NewUser:
     def __init__(self,phonenum, name, age, main_content, data_usage, call_usage, message_usage, Agency_name, Check_INF, Check_cheap):
         self.phonenum = phonenum
         self.name = name
-        self.age = age
+        self.age = int(age)
         self.main_content = main_content
-        self.data_usage = data_usage
+        self.data_usage = float(data_usage)
         self.Agency_name = Agency_name
         self.Check_INF = Check_INF
         self.Check_cheap = Check_cheap
-        self.Call_usage = call_usage
-        self.Message_usage = message_usage
+        self.Call_usage = int(call_usage)
+        self.Message_usage = int(message_usage)
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,

@@ -32,8 +32,8 @@
       </select>
       <br>
     <div class="form-group">
-      <label for="data_usage">데이터 사용량(MB) :</label>
-        <input type="number" min = 0 max=999999 class="form-control" id="data_usage" placeholder="Enter Usage" name="data_usage">
+      <label for="data_usage">데이터 사용량(GB) :</label>
+        <input type="number" step =0.01 min = 0 max=999999 class="form-control" id="data_usage" placeholder="Enter Usage" name="data_usage">
     </div>
       <div class="form-group">
       <label for="data_usage">통화 사용량(분) :</label>
@@ -50,6 +50,7 @@
             <option>SKT</option>
             <option>KT</option>
             <option>LGU+</option>
+
       </select>
     </div>
         <label>무제한 여부</label>

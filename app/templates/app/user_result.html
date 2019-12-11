@@ -118,7 +118,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">최적 알고리즘을 통한 추천 </div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ use.Use_max }} GB</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ result2 }} </div>
                     </div>
                   </div>
                 </div>
@@ -132,7 +132,9 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">최빈도를 통한 추천</div>
-
+                        {% for plan in mostplans %}
+                            {{ plan }}
+                        {% endfor %}
                       <div class="h5 mb-0 font-weight-bold text-gray-800" id="Total_data"></div>
                     </div>
                   </div>

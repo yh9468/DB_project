@@ -112,9 +112,9 @@ def newuserform(request):
         else:
             request.session['is_cheap'] = False
         if(Check_INF == 'on'):
-            request.session['is_change'] = True
+            request.session['is_inf'] = True
         else:
-            request.session['is_change'] = True
+            request.session['is_inf'] = False
         return redirect('dashboard')
     # get
     else:
@@ -123,16 +123,22 @@ def newuserform(request):
 def dashboard(request):
     user_id = request.session['user_id']
     is_cheap = request.session['is_cheap']
-    is_change = request.session['is_change']
     # 새로운 유저인 경우.
     if user_id == "0000":
+        is_inf = request.session['is_inf']
         newuser = request.session['newuser']
         newuser = JSON_To_NewUser(newuser)
-        context = {'user':newuser}
+        result2 = new_pop_best_plan(newuser.name, newuser.age, newuser.main_content, newuser.data_usage,
+                          newuser.Call_usage, newuser.Message_usage, newuser.Agency_name, is_inf, is_cheap)
+        result = newuser_mostplan(is_cheap, is_inf, int(newuser.data_usage) / 1024)
+
+        context = {'user': newuser, 'mostplans': result, 'result2' : result2}
         return render(request, 'app/user_result.html', context)
 
     # 로그인 하는 경우
     else:
+        is_change = request.session['is_change']
+
         recommend = pop_best_plan(user_id, is_change, is_cheap)
         recommend2 = most_plan(request)
         recommend3 = recommend2[1][0]
@@ -453,6 +459,131 @@ def logout(request):
     return redirect('signin')
 # Create your views here.
 
+def most_plan(request):
+    # 현재 접속중인 세션 기준으로 phonenum을 받아온다
+    phonenum = request.session['user_id']
+    # json 형식의 user_plan을 가져옴
+    user_plan = requests.get("http://127.0.0.1:8000/api/" + phonenum)
+    user_plan = user_plan.json()
+
+    use_data = requests.get("http://127.0.0.1:8000/useapi/" + phonenum)
+    use_data = use_data.json()
+
+    # 유저의 데이터 사용량 기반 타겟 범위 설정
+    user_data_useage = use_data[0]['Use_max']
+    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
+    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
+    # 범위에 맞는 플랜을 모두 찾아온다
+    # 타겟 값을 통해 폰번호를 추출 -> 폰번호로 다시 오브젝트 필터를 씌워서 plan 추출 -> 플랜 번호로 ->
+    users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
+    plan_id = []
+    for item in users_search:
+        plan_id.append(str(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID))
+    cnt = Counter(plan_id).most_common(2)
+    print(cnt)
+    # 리턴 형식은 tuples in list
+    # Ex: [('순선택 100분 250MB', 37), ('LTE WARP 골든 150', 34)]
+    return cnt
+
+def newuser_mostplan(is_cheap, is_inf, use_data):
+    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(use_data)
+    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(use_data)
+    users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
+    plan_id = []
+    for item in users_search:
+        plan_id.append(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID.Plan_ID)
+
+    cnt = list(Counter(plan_id))
+    # 무한, 알뜰폰 여부 체크
+    result_id = []
+    if (is_cheap is True) and (is_inf is True):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 41 or item//100 == 51 or item//100 == 61:
+                result_id.append(item)
+    elif (is_cheap is True) and (is_inf is False):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 40 or item//100 == 50 or item//100 == 60:
+                result_id.append(item)
+    elif (is_cheap is False) and (is_inf is True):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 11 or item//100 == 21 or item//100 == 31:
+                result_id.append(item)
+    elif (is_cheap is False) and (is_inf is False):
+        for item in cnt:
+            if len(result_id) == 2:
+                break
+            if item//100 == 10 or item//100 == 20 or item//100 == 30:
+                result_id.append(item)
+
+    result_plan = []
+    for plan_id in result_id:
+        result_plan.append(Plan.objects.get(Plan_ID=plan_id).__str__())
+    return result_plan
+
+
+def new_pop_best_plan(name, age, content, data_useage, call_useage, message_useage, family_agency, check_inf, check_cheaf):
+    norplan = requests.get("http://127.0.0.1:8000/norapi/")  # 기본 요금제
+    norplan = norplan.json()
+    infplan = requests.get("http://127.0.0.1:8000/infapi/")  # 무제한 요금제
+    infplan = infplan.json()
+
+    best_plan = []
+
+    for plan_info in norplan:
+        # 가족 결합
+        if not (family_agency == plan_info["Agency_name"]):
+            continue
+        if plan_info["age"] == 65:
+            if age < 65:
+                continue
+        elif plan_info["age"] == 18:
+            if age > 18:
+                continue
+        elif plan_info["age"] == 24:
+            if (age < 19) or (age > 24):
+                continue
+
+        if data_useage < plan_info["Total_limit"]:
+            if call_useage < plan_info["Call_Limit"]:
+                if message_useage < plan_info["Message_Limit"]:
+                    best_plan.append(plan_info)
+
+    if check_inf:
+        for plan_info in infplan:
+            # 가족 결합
+            if not (family_agency == plan_info["Agency_name"]):
+                continue
+            if plan_info["age"] == 65:
+                if age < 65:
+                    continue
+            elif plan_info["age"] == 18:
+                if age > 18:
+                    continue
+            elif plan_info["age"] == 24:
+                if (age < 19) or (age > 24):
+                    continue
+
+            if call_useage < plan_info["Call_Limit"]:
+                if message_useage < plan_info["Message_Limit"]:
+                    best_plan.append(plan_info)
+
+    min_cost = best_plan[0]["Plan_cost"]
+    best_plan_ID = ""
+    for plan_info in best_plan:
+        if plan_info["Plan_cost"] < min_cost:
+            min_cost = plan_info["Plan_cost"]
+            best_plan_ID = plan_info["Plan_name"]
+
+    return best_plan_ID
+
+
+
 
 def pop_best_plan(phonenum, change_agency, use_c_agency):
     user_info = requests.get("http://127.0.0.1:8000/api/" + str(phonenum)) # 사용자 데이터
@@ -507,13 +638,13 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                     if user_age > 18:
                         continue
                 elif plan_info["age"] == 24:
-                    if (user_age < 19) and (user_age > 24):
+                    if (user_age < 19) or (user_age > 24):
                         continue
-                else:
-                    if user_data < plan_info["Total_limit"]:
-                        if user_call < plan_info["Call_Limit"]:
-                            if user_message < plan_info["Message_Limit"]:
-                                best_plan.append(plan_info)
+
+                if user_data < plan_info["Total_limit"]:
+                    if user_call < plan_info["Call_Limit"]:
+                        if user_message < plan_info["Message_Limit"]:
+                            best_plan.append(plan_info)
 
             for plan_info in infplan:
                 # 알뜰폰 요금제 사용하지 않을경우
@@ -527,13 +658,11 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                     if user_age > 18:
                         continue
                 elif plan_info["age"] == 24:
-                    if (user_age < 19) and (user_age > 24):
+                    if (user_age < 19) or (user_age > 24):
                         continue
-                else:
-                    if user_data < plan_info["Month_limit"]:
-                        if user_call < plan_info["Call_Limit"]:
-                            if user_message < plan_info["Message_Limit"]:
-                                best_plan.append(plan_info)
+                if user_call < plan_info["Call_Limit"]:
+                    if user_message < plan_info["Message_Limit"]:
+                        best_plan.append(plan_info)
 
         # 사용자의 통신사와 가족의 통신사가 다른 경우 가족의 통신사로 추천
         else:
@@ -551,19 +680,20 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                     if user_age > 18:
                         continue
                 elif plan_info["age"] == 24:
-                    if (user_age < 19) and (user_age > 24):
+                    if (user_age < 19) or (user_age > 24):
                         continue
-                else:
-                    if user_data < plan_info["Total_limit"]:
-                        if user_call < plan_info["Call_Limit"]:
-                            if user_message < plan_info["Message_Limit"]:
-                                best_plan.append(plan_info)
+                if user_data < plan_info["Total_limit"]:
+                    if user_call < plan_info["Call_Limit"]:
+                        if user_message < plan_info["Message_Limit"]:
+                            best_plan.append(plan_info)
 
             for plan_info in infplan:
                 # 알뜰폰 요금제 사용하지 않을경우
                 if not use_c_agency:
                     if plan_info["Plan_ID"] > 4000:
                         continue
+                if not (plan_info["Agency_name"] == family_agency):
+                    continue
                 if plan_info["age"] == 65:
                     if user_age < 65:
                         continue
@@ -571,13 +701,11 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                     if user_age > 18:
                         continue
                 elif plan_info["age"] == 24:
-                    if (user_age < 19) and (user_age > 24):
+                    if (user_age < 19) or (user_age > 24):
                         continue
-                else:
-                    if user_data < plan_info["Month_limit"]:
-                        if user_call < plan_info["Call_Limit"]:
-                            if user_message < plan_info["Message_Limit"]:
-                                best_plan.append(plan_info)
+                if user_call < plan_info["Call_Limit"]:
+                    if user_message < plan_info["Message_Limit"]:
+                        best_plan.append(plan_info)
 
     # 통신사 변경 의사 = X
     # 사용자의 통신사에서 추천
@@ -596,19 +724,20 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                 if user_age > 18:
                     continue
             elif plan_info["age"] == 24:
-                if (user_age < 19) and (user_age > 24):
+                if (user_age < 19) or (user_age > 24):
                     continue
-            else:
-                if user_data < plan_info["Total_limit"]:
-                    if user_call < plan_info["Call_Limit"]:
-                        if user_message < plan_info["Message_Limit"]:
-                            best_plan.append(plan_info)
+            if user_data < plan_info["Total_limit"]:
+                if user_call < plan_info["Call_Limit"]:
+                    if user_message < plan_info["Message_Limit"]:
+                        best_plan.append(plan_info)
 
         for plan_info in infplan:
             # 알뜰폰 요금제 사용하지 않을경우
             if not use_c_agency:
                 if plan_info["Plan_ID"] > 4000:
                     continue
+            if not (plan_info["Agency_name"] == user_agency):
+                continue
             if plan_info["age"] == 65:
                 if user_age < 65:
                     continue
@@ -616,46 +745,18 @@ def pop_best_plan(phonenum, change_agency, use_c_agency):
                 if user_age > 18:
                     continue
             elif plan_info["age"] == 24:
-                if (user_age < 19) and (user_age > 24):
+                if (user_age < 19) or (user_age > 24):
                     continue
-            else:
-                if user_data < plan_info["Month_limit"]:
-                    if user_call < plan_info["Call_Limit"]:
-                        if user_message < plan_info["Message_Limit"]:
-                            best_plan.append(plan_info)
+            if user_call < plan_info["Call_Limit"]:
+                if user_message < plan_info["Message_Limit"]:
+                    best_plan.append(plan_info)
 
     # 추천 가능한 모든 요금제 중에서 가장 저렴한 요금제 찾기
-    min_cost = best_plan[1]["Plan_cost"]
-    best_plan_name = ""
+    min_cost = best_plan[0]["Plan_cost"]
+    best_plan_ID = 0
     for plan_info in best_plan:
         if plan_info["Plan_cost"] < min_cost:
             min_cost = plan_info["Plan_cost"]
-            best_plan_name = plan_info["Plan_name"]
+            best_plan_ID = plan_info["Plan_name"]
 
-    return best_plan_name
-
-def most_plan(request):
-    # 현재 접속중인 세션 기준으로 phonenum을 받아온다
-    phonenum = request.session['user_id']
-    # json 형식의 user_plan을 가져옴
-    user_plan = requests.get("http://127.0.0.1:8000/api/" + phonenum)
-    user_plan = user_plan.json()
-
-    use_data = requests.get("http://127.0.0.1:8000/useapi/" + phonenum)
-    use_data = use_data.json()
-
-    # 유저의 데이터 사용량 기반 타겟 범위 설정
-    user_data_useage = use_data[0]['Use_max']
-    target_max = (lambda t_max: t_max+0.3 if t_max+0.3 <= 99999 else 99999)(user_data_useage)
-    target_min = (lambda t_min: t_min-0.3 if t_min-0.3 >= 0 else 0)(user_data_useage)
-    # 범위에 맞는 플랜을 모두 찾아온다
-    # 타겟 값을 통해 폰번호를 추출 -> 폰번호로 다시 오브젝트 필터를 씌워서 plan 추출 -> 플랜 번호로 ->
-    users_search = list(Use_detail.objects.filter(Use_max__gte=target_min, Use_max__lte=target_max).values('phonenum'))
-    plan_id = []
-    for item in users_search:
-        plan_id.append(str(MyUser.objects.get(phonenum=item['phonenum']).Plan_ID))
-    cnt = Counter(plan_id).most_common(2)
-    print(cnt)
-    # 리턴 형식은 tuples in list
-    # Ex: [('순선택 100분 250MB', 37), ('LTE WARP 골든 150', 34)]
-    return cnt
+    return best_plan_ID
